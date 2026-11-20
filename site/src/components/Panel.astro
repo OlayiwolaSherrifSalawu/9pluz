@@ -1,0 +1,8 @@
+---
+interface Props { tone?: 'orange' | 'black' | 'navy' | 'grey' | 'paper'; stack?: boolean; short?: boolean; id?: string; class?: string; label?: string }
+const { tone = 'black', stack = true, short = false, id, class: cls = '', label } = Astro.props;
+const classes = ['panel', `panel--${tone}`, tone === 'orange' || tone === 'paper' ? 'on-orange' : '', short ? 'panel--short' : '', cls].filter(Boolean).join(' ');
+---
+<section class={classes} id={id} data-stack={stack ? '' : undefined} aria-label={label}>
+  <slot />
+</section>

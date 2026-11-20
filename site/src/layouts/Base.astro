@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingCta from '../components/FloatingCta.astro';
+import defaultOg from '../assets/site/logo.png';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: ImageMetadata;
+  type?: 'website' | 'article';
+  floatingCta?: boolean;
+  jsonLd?: object;
+  noindex?: boolean;
+}
+const { title, description, image, type = 'website', floatingCta = true, jsonLd, noindex = false } = Astro.props;
+const fullTitle = title === '99Pluz' ? '99Pluz · Music PR, culture & media' : `${title} · 99Pluz`;
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '') || '/', Astro.site);
+const og = await getImage({ src: image ?? defaultOg, width: 1200, format: 'jpg' });
+const ogUrl = new URL(og.src, Astro.site);
+---
+<!doctype html>
+<html lang="en-GB" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#0d0d0d" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <meta property="og:site_name" content="99Pluz" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@the99pluz" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    {floatingCta && <FloatingCta />}
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>

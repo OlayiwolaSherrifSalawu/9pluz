@@ -1,0 +1,20 @@
+---
+interface Props { items: string[]; label: string }
+const { items, label } = Astro.props;
+const row = [...items, ...items];
+---
+<div class="marquee" role="region" aria-label={label}>
+  <ul class="sr-only">{items.map((i) => <li>{i}</li>)}</ul>
+  <div class="track" aria-hidden="true">
+    {[0, 1].map(() => <div class="run">{row.map((i) => <span class="item">{i}<span class="sep">✦</span></span>)}</div>)}
+  </div>
+</div>
+<style>
+  .marquee { overflow: hidden; border-block: 1px solid currentColor; padding-block: .6rem; }
+  .track { display: flex; width: max-content; animation: loop 40s linear infinite; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .run { display: flex; }
+  .item { font-family: var(--f-display); text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 3vw, 4.5rem); line-height: 1; white-space: nowrap; display: inline-flex; align-items: center; }
+  .sep { font-family: var(--f-body); font-size: .45em; margin-inline: .6em; }
+  @keyframes loop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>

@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/site/logo-crop.png';
+import { NAV, SITE } from '../lib/site';
+const path = Astro.url.pathname.replace(/\.html$/, '');
+const isActive = (href: string) => path === href || path.startsWith(href + '/') || (href === '/blog' && path.startsWith('/post/'));
+---
+<header class="site-header">
+  <div class="bar wrap">
+    <a href="/" class="brand" aria-label="99Pluz home">
+      <Image src={logo} alt="" width={52} height={38} loading="eager" class="brand-logo" />
+      <span class="brand-text">
+        <span class="brand-name">99Pluz</span>
+        <span class="brand-tag">{SITE.tagline}</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {NAV.map((n) => <li><a href={n.href} class="ulink-hover" aria-current={isActive(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+    <a href="/contact" class="btn btn--orange header-cta">Work with us</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="sr-only">Menu</span>
+      <span class="menu-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="Mobile">
+      <ul>
+        {NAV.map((n) => <li><a href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="mobile-contact">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={SITE.phoneHref}>{SITE.phone}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header { position: fixed; inset: 0 0 auto 0; z-index: 50; transition: transform var(--dur-m) var(--ease-out); }
+  .site-header:global(.is-tucked) { transform: translateY(-100%); transition-timing-function: var(--ease-in); }
+  :global(.progress) { transition: transform var(--dur-m) var(--ease-out); }
+  :global(.progress.is-tucked) { transform: translateY(calc(-1 * var(--header-h))); }
+  .bar {
+    position: relative; z-index: 2;
+    height: var(--header-h);
+    display: flex; align-items: center; gap: var(--space);
+    background: var(--c-black);
+    border-bottom: 1px solid var(--c-white-30);
+  }
+  .brand { display: flex; align-items: center; gap: .75rem; text-decoration: none; flex: none; }
+  .brand-logo { width: 44px; height: auto; }
+  .brand-text { display: grid; line-height: 1.15; }
+  .brand-name { font-weight: 700; font-size: .9375rem; letter-spacing: .02em; }
+  .brand-tag { font-size: .8125rem; color: var(--c-white-60); }
+  .nav { margin-inline: auto; }
+  .nav ul { display: flex; gap: clamp(1rem, 2vw, 2.25rem); list-style: none; }
+  .nav a { text-decoration: none; font-size: .9375rem; font-weight: 500; padding-block: .5rem; position: relative; }
+  .nav a::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: .2rem; height: 1px; background: currentColor;
+    transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease-out);
+  }
+  .nav a:hover::after, .nav a[aria-current='page']::after { transform: scaleX(1); transform-origin: left; }
+  .nav a[aria-current='page'] { color: var(--c-orange); }
+  .header-cta { min-height: 2.5rem; padding: .4rem 1rem; font-size: .875rem; }
+  .menu-btn { display: none; margin-left: auto; width: 2.75rem; height: 2.75rem; background: none; border: 1px solid var(--c-white-30); cursor: pointer; place-items: center; }
+  .menu-icon, .menu-icon::before { display: block; width: 1.125rem; height: 1px; background: currentColor; position: relative; transition: transform .3s var(--ease-out); }
+  .menu-icon { box-shadow: 0 -5px 0 currentColor; }
+  .menu-icon::before { content: ''; top: 5px; }
+  [aria-expanded='true'] .menu-icon { box-shadow: none; transform: rotate(45deg); }
+  [aria-expanded='true'] .menu-icon::before { top: 0; transform: rotate(-90deg); }
+
+  .mobile-menu {
+    position: fixed; inset: var(--header-h) 0 0 0; z-index: 1;
+    background: var(--c-orange); color: var(--c-ink);
+    padding: var(--space) var(--gutter);
+    display: flex; flex-direction: column; justify-content: space-between;
+    overflow-y: auto;
+  }
+  .mobile-menu[hidden] { display: none; }
+  .mobile-menu ul { list-style: none; }
+  .mobile-menu li + li { border-top: 1px solid var(--c-black-20); }
+  .mobile-menu nav a { display: block; font-family: var(--f-display); text-transform: uppercase; font-size: clamp(2.75rem, 12vw, 4.5rem); line-height: 1.05; padding-block: .35rem; text-decoration: none; }
+  .mobile-menu nav a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+  .mobile-contact { display: grid; gap: .5rem; padding-top: var(--space); font-weight: 600; }
+
+  @media (max-width: 960px) {
+    .nav, .header-cta { display: none; }
+    .menu-btn { display: grid; }
+  }
+  @media (max-width: 380px) { .brand-tag { display: none; } }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  if (btn && menu) {
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      (window as any).__lenis?.[open ? 'stop' : 'start']();
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+    matchMedia('(min-width: 961px)').addEventListener('change', (e) => e.matches && set(false));
+  }
+</script>

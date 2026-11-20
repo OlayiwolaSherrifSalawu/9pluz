@@ -1,0 +1,233 @@
+@import '@fontsource/anton/400.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+
+:root {
+  /* brand (kept from the live site) */
+  --c-orange: #ec8835;
+  --c-orange-text: #a34f0f;      /* orange for text on white/paper: >= 4.9:1 */
+  --c-black: #0d0d0d;
+  --c-ink: #000;
+  --c-white: #fff;
+  --c-navy: #112a78;
+  --c-grey: #4a4a4a;
+  --c-grey-light: #c3c3c3;
+  --c-paper: #f6f3ee;            /* long-form reading surface */
+
+  --c-white-30: rgb(255 255 255 / .3);
+  --c-white-60: rgb(255 255 255 / .72);
+  --c-black-20: rgb(0 0 0 / .2);
+  --c-black-60: rgb(0 0 0 / .7);
+
+  /* type */
+  --f-display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+  --f-body: 'Inter Tight Variable', 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
+
+  --fs-xs: .875rem;                                   /* meta, labels */
+  --fs-s: 1rem;                                       /* UI */
+  --fs-m: 1.125rem;                                   /* body */
+  --fs-l: clamp(1.25rem, 1.05rem + .9vw, 1.875rem);   /* lead */
+  --fs-xl: clamp(2.5rem, 1.6rem + 4vw, 5.5rem);       /* section titles */
+  --fs-mega: clamp(4.5rem, 2rem + 15vw, 19rem);       /* panel headlines */
+
+  /* space */
+  --gutter: clamp(1rem, .6rem + 1.6vw, 2rem);
+  --space: clamp(1.25rem, .8rem + 1.8vw, 2.5rem);
+  --space-l: clamp(3rem, 2rem + 5vw, 7.5rem);
+  --header-h: 4rem;
+  --measure: 68ch;
+
+  /* motion system: one set of curves and durations used everywhere */
+  --ease-in-out: cubic-bezier(.55, 0, .1, 1);     /* moving between positions */
+  --ease-out: cubic-bezier(.25, .74, .22, .99);    /* entering, settling */
+  --ease-in: cubic-bezier(.55, 0, 1, .45);         /* leaving */
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);  /* small playful overshoot for hovers */
+  --dur-xs: 90ms;    /* press states */
+  --dur-s: 200ms;    /* hovers, colour */
+  --dur-m: 320ms;    /* small moves, header */
+  --dur-l: 650ms;    /* reveals */
+  --dur-xl: 900ms;   /* headline lines */
+  --stagger: 60ms;
+
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body {
+  margin: 0;
+  background: var(--c-black);
+  color: var(--c-white);
+  font-family: var(--f-body);
+  font-size: var(--fs-m);
+  line-height: 1.55;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3, h4 { margin: 0; font-weight: 400; }
+p { margin: 0; }
+main { overflow-x: clip; }
+ul { margin: 0; padding: 0; }
+
+:focus-visible { outline: 3px solid var(--c-orange); outline-offset: 3px; }
+.on-orange :focus-visible { outline-color: var(--c-ink); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip {
+  position: fixed; left: var(--gutter); top: -4rem; z-index: 100;
+  background: var(--c-orange); color: var(--c-ink); padding: .75rem 1rem; font-weight: 600;
+}
+.skip:focus { top: .75rem; }
+
+/* ---------- type ---------- */
+.mega, .display {
+  font-family: var(--f-display);
+  text-transform: uppercase;
+  line-height: .86;
+  letter-spacing: -.005em;
+}
+.mega { font-size: var(--fs-mega); }
+.display { font-size: var(--fs-xl); line-height: .92; }
+.lead { font-size: var(--fs-l); line-height: 1.3; font-weight: 400; max-width: 34ch; text-wrap: pretty; }
+.eyebrow {
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+}
+.muted { color: var(--c-white-60); }
+.on-orange .muted { color: var(--c-black-60); }
+
+/* ---------- layout ---------- */
+.wrap { width: 100%; padding-inline: var(--gutter); margin-inline: auto; max-width: 110rem; }
+.rule-top { border-top: 1px solid var(--c-white-30); }
+.on-orange .rule-top, .on-orange.rule-top { border-color: var(--c-black-20); }
+.split { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 900px) {
+  .split { grid-template-columns: 1fr 1fr; }
+  .split > * + * { border-left: 1px solid var(--c-white-30); }
+  .on-orange .split > * + * { border-color: var(--c-black-20); }
+}
+
+/* ---------- panels: sticky, tilted, stacked ---------- */
+.panel {
+  --bg: var(--c-black);
+  --tilt: 0deg;
+  position: relative;
+  min-height: 100svh;
+  padding-block: calc(var(--header-h) + var(--space)) var(--space-l);
+  color: var(--c-white);
+  isolation: isolate;
+}
+.panel::before {           /* oversize background so tilted corners never show a gap */
+  content: '';
+  position: absolute; inset: 0 -12vw -40vh -12vw;
+  background: var(--bg);
+  z-index: -1;
+}
+.panel[data-stack] {
+  position: sticky;
+  top: var(--stick, 0px);
+  transform-origin: 0 0;
+  transform: rotate(var(--tilt));
+  will-change: transform;
+}
+.panel--orange { --bg: var(--c-orange); color: var(--c-ink); }
+.panel--navy { --bg: var(--c-navy); }
+.panel--grey { --bg: var(--c-grey); }
+.panel--black { --bg: var(--c-black); }
+.panel--paper { --bg: var(--c-paper); color: var(--c-ink); }
+.panel--short { min-height: auto; }
+
+/* ---------- buttons & links ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: .75rem;
+  min-height: 3.25rem; padding: .75rem 1.5rem;
+  font-size: var(--fs-s); font-weight: 600; text-decoration: none;
+  border: 1px solid currentColor;
+  background: transparent; cursor: pointer;
+  transition: background-color .25s var(--ease-out), color .25s var(--ease-out);
+}
+.btn--solid { background: var(--c-ink); color: var(--c-white); border-color: var(--c-ink); }
+.btn--solid:hover { background: var(--c-white); color: var(--c-ink); }
+.btn--orange { background: var(--c-orange); color: var(--c-ink); border-color: var(--c-orange); }
+.btn--orange:hover { background: var(--c-white); border-color: var(--c-white); }
+.btn--ghost:hover { background: var(--c-white); color: var(--c-ink); border-color: var(--c-white); }
+.on-orange .btn--ghost:hover { background: var(--c-ink); color: var(--c-white); border-color: var(--c-ink); }
+.btn-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.ulink {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  transition: background-size .45s var(--ease-out);
+  padding-bottom: 2px;
+}
+.ulink:hover { background-size: 0 1px; background-position: 100% 100%; }
+
+.arrow-circle {
+  display: inline-grid; place-items: center;
+  width: 2rem; height: 2rem; border: 1px solid currentColor; border-radius: 50%;
+  flex: none;
+}
+.arrow-circle svg { width: 1rem; height: 1rem; }
+a:hover .arrow-circle svg, button:hover .arrow-circle svg { animation: nudge .5s var(--ease-out); }
+@keyframes nudge { 50% { transform: translateX(3px) rotate(-8deg); } }
+
+/* ---------- labels ---------- */
+.tag {
+  display: inline-block; font-size: .8125rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  padding: .2rem .5rem; border: 1px solid currentColor; text-decoration: none;
+}
+.tag--partner { background: var(--c-orange); color: var(--c-ink); border-color: var(--c-orange); }
+
+/* ---------- reveal choreography ----------
+   Order inside each block: eyebrow -> headline lines -> doodle draws -> body -> actions.
+   motion.ts assigns --d (delay) by position so related items cascade instead of popping together. */
+.reveal {
+  opacity: 0; transform: translateY(1.75rem);
+  transition: opacity var(--dur-l) var(--ease-out) var(--d, 0ms), transform var(--dur-l) var(--ease-out) var(--d, 0ms);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+.mega-reveal { overflow: clip; display: block; }
+.mega-reveal > span {
+  display: inline-block; transform: translateY(105%) rotate(4deg); transform-origin: 0 100%;
+  transition: transform var(--dur-xl) var(--ease-out) var(--d, 0ms);
+}
+.mega-reveal.is-in > span { transform: none; }
+/* scroll-linked drift on big headlines: lines slide against each other as you pass */
+[data-drift] .mega-reveal { transform: translate3d(var(--drift, 0px), 0, 0); will-change: transform; }
+
+/* ---------- ambient life: slow, low-amplitude loops that never fully stop ---------- */
+.doodle.is-in { animation: var(--idle, none); transform-box: fill-box; transform-origin: center; }
+.doodle--star.is-in { --idle: twinkle 6s var(--ease-in-out) 1.6s infinite alternate; }
+.doodle--loop.is-in { --idle: wobble 7s var(--ease-in-out) 1.8s infinite alternate; }
+.doodle--balloon.is-in { --idle: bob 3.6s var(--ease-in-out) 1.4s infinite alternate; }
+.doodle--arrow.is-in { --idle: point 2.4s var(--ease-in-out) 1.6s infinite alternate; }
+.doodle--plus.is-in { --idle: twinkle 5s var(--ease-in-out) 1.4s infinite alternate; }
+.doodle--burst.is-in { --idle: spin 26s linear 1.4s infinite; }
+.doodle--cross.is-in { --idle: wobble 4s var(--ease-in-out) 1.4s infinite alternate; }
+@keyframes twinkle { from { transform: rotate(-6deg) scale(.94); } to { transform: rotate(10deg) scale(1.08); } }
+@keyframes wobble { from { transform: rotate(-2.5deg); } to { transform: rotate(2deg) scale(1.02); } }
+@keyframes bob { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-8px) rotate(2deg); } }
+@keyframes point { from { transform: translateX(0); } to { transform: translateX(10px) rotate(-3deg); } }
+@keyframes spin { to { transform: rotate(1turn); } }
+
+/* ---------- interaction polish ---------- */
+.btn { transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out), border-color var(--dur-s) var(--ease-out), transform var(--dur-m) var(--ease-out); }
+.btn:active { transform: scale(.97); transition-duration: var(--dur-xs); }
+[data-magnetic] { transform: translate3d(var(--mx, 0px), var(--my, 0px), 0); transition: transform 450ms var(--ease-spring), background-color var(--dur-s), color var(--dur-s), border-color var(--dur-s); }
+
+/* scroll progress: a thin orange line under the header shows where you are in the story */
+.progress { position: fixed; left: 0; right: 0; top: var(--header-h); height: 2px; z-index: 51; pointer-events: none; }
+.progress span { display: block; height: 100%; background: var(--c-orange); transform-origin: left; transform: scaleX(var(--p, 0)); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .panel[data-stack] { transform: none; }
+  .reveal, .mega-reveal > span, [data-drift] .mega-reveal, [data-magnetic] { opacity: 1; transform: none; }
+}
+.no-js .reveal, .no-js .mega-reveal > span { opacity: 1; transform: none; }

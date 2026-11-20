@@ -1,0 +1,24 @@
+---
+import { SITE } from '../lib/site';
+---
+<form class="news" action={`mailto:${SITE.email}`} data-news-form>
+  <label for="news-email" class="eyebrow">Monthly updates: new music, interviews and features</label>
+  <div class="line">
+    <input id="news-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+    <button class="btn btn--solid" type="submit">Subscribe</button>
+  </div>
+</form>
+<style>
+  .news { display: grid; gap: .6rem; max-width: 34rem; }
+  .line { display: flex; }
+  input { flex: 1; min-width: 0; min-height: 3.25rem; padding: .7rem .85rem; border: 1px solid var(--c-ink); background: var(--c-white); color: var(--c-ink); border-radius: 0; }
+  button { flex: none; }
+</style>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-news-form]').forEach((f) => f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = f.querySelector('input')!;
+    if (!input.reportValidity()) return;
+    location.href = `${f.action}?subject=${encodeURIComponent('Subscribe me to 99Pluz updates')}&body=${encodeURIComponent(input.value)}`;
+  }));
+</script>

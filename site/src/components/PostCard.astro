@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import { type Post, postImage, categoryName, formatDate } from '../lib/site';
+interface Props { post: Post; eager?: boolean; headingLevel?: 'h2' | 'h3' }
+const { post, eager = false, headingLevel: H = 'h3' } = Astro.props;
+const cat = post.categories[0];
+---
+<article class="card reveal">
+  <div class="media">
+    <Image src={postImage(post.cover)} alt={post.coverAlt} width={720} widths={[360, 540, 720]} sizes="(min-width: 1200px) 25vw, (min-width: 700px) 45vw, 92vw" loading={eager ? 'eager' : 'lazy'} />
+  </div>
+  <div class="meta">
+    <a class="cat" href={`/blog/categories/${cat}`}>{categoryName(cat)}</a>
+    {post.partner && <span class="tag tag--partner">Client</span>}
+    <time datetime={post.published}>{formatDate(post.published)}</time>
+  </div>
+  <H class="title"><a href={`/post/${post.slug}`} class="stretched">{post.title}</a></H>
+  {post.description && <p class="excerpt">{post.description}</p>}
+</article>
+<style>
+  .card { position: relative; display: flex; flex-direction: column; gap: .75rem; border-top: 1px solid currentColor; padding-top: .75rem; }
+  .media { aspect-ratio: 1; overflow: hidden; background: var(--c-grey); }
+  .media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease-out); }
+  .card:hover .media :global(img) { transform: scale(1.06) rotate(-.6deg); }
+  .media { position: relative; }
+  .media::after { content: 'Read'; position: absolute; right: .75rem; bottom: .75rem; padding: .35rem .7rem; background: var(--c-orange); color: var(--c-ink); font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; transform: translateY(140%); transition: transform var(--dur-m) var(--ease-spring); }
+  .card:hover .media::after { transform: none; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; font-size: var(--fs-xs); }
+  .cat { position: relative; z-index: 1; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; text-decoration: none; }
+  .cat:hover { text-decoration: underline; }
+  time { opacity: .75; }
+  .title { font-family: var(--f-body); font-size: 1.25rem; line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  .title a { text-decoration: none; }
+  .stretched::after { content: ''; position: absolute; inset: 0; }
+  .card:hover .title a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .excerpt { font-size: .9375rem; line-height: 1.45; opacity: .8; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .tag { position: relative; z-index: 1; }
+</style>

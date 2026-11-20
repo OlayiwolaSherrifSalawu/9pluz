@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import CategoryBar from './CategoryBar.astro';
+import PostCard from './PostCard.astro';
+import Pagination from './Pagination.astro';
+import Doodle from './Doodle.astro';
+import { type Post, PER_PAGE, postImage } from '../lib/site';
+
+interface Props { all: Post[]; page: number; base: string; heading: string; intro: string; category?: string; titleTag: string }
+const { all, page, base, heading, intro, category = 'all', titleTag } = Astro.props;
+const last = Math.max(1, Math.ceil(all.length / PER_PAGE));
+const list = all.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+const title = page > 1 ? `${titleTag} (page ${page})` : titleTag;
+---
+<Base title={title} description={intro} image={list[0] ? postImage(list[0].cover) : undefined}>
+  <section class="blog-head on-orange">
+    <div class="wrap">
+      <p class="eyebrow">{category === 'all' ? '99Pluz blog' : 'Category'} · {all.length} stories{page > 1 ? ` · Page ${page} of ${last}` : ''}</p>
+      <h1 class="display blog-h1">{heading}<Doodle name="swoosh" class="h1-swoosh" /></h1>
+      <p class="lead">{intro}</p>
+    </div>
+  </section>
+  <CategoryBar active={category} />
+  <section class="blog-body" aria-label="Posts">
+    <div class="wrap">
+      <div class="grid">
+        {list.map((p, i) => <PostCard post={p} eager={i < 4} headingLevel="h2" />)}
+      </div>
+      <Pagination current={page} last={last} base={base} />
+    </div>
+  </section>
+</Base>
+<style>
+  .blog-head { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space-l)) var(--space); }
+  .blog-head .wrap { display: grid; gap: 1rem; }
+  .blog-h1 { position: relative; max-width: 18ch; font-size: clamp(3rem, 1.6rem + 6vw, 8rem); text-wrap: balance; }
+  .blog-h1 :global(.h1-swoosh) { display: block; width: clamp(10rem, 30vw, 26rem); color: var(--c-white); margin-top: .25rem; }
+  .blog-body { padding-block: var(--space) var(--space-l); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--space-l) clamp(1rem, 2vw, 2rem); }
+</style>

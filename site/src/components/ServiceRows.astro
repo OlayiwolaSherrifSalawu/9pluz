@@ -1,0 +1,27 @@
+---
+interface Props { items: { title: string; text: string; deliverables?: string }[] }
+const { items } = Astro.props;
+---
+<ol class="svc">
+  {items.map((s, i) => (
+    <li class="reveal">
+      <span class="n">{String(i + 1).padStart(2, '0')}</span>
+      <h3 class="t">{s.title}</h3>
+      <div class="d">
+        <p>{s.text}</p>
+        {s.deliverables && <p class="del"><strong>Deliverables:</strong> {s.deliverables}</p>}
+      </div>
+    </li>
+  ))}
+</ol>
+<style>
+  .svc { list-style: none; }
+  li { display: grid; gap: .75rem 2rem; padding-block: var(--space); border-top: 1px solid var(--c-white-30); }
+  li:last-child { border-bottom: 1px solid var(--c-white-30); }
+  @media (min-width: 900px) { li { grid-template-columns: 4rem 1.1fr 1fr; align-items: start; } }
+  .n { font-size: var(--fs-xs); font-weight: 600; padding-top: .5rem; }
+  .t { font-family: var(--f-display); text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 2.4vw, 3.75rem); line-height: .95; }
+  .d { display: grid; gap: .75rem; max-width: 40rem; }
+  .del { color: var(--c-white-60); font-size: var(--fs-s); }
+  .del strong { color: var(--c-orange); font-weight: 600; }
+</style>

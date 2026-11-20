@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Doodle from '../components/Doodle.astro';
+import NewsDeck from '../components/NewsDeck.astro';
+import Arrow from '../components/Arrow.astro';
+import { posts } from '../lib/site';
+---
+<Base title="Page not found" description="This page doesn't exist. Head back to the 99Pluz homepage or the blog." noindex>
+  <section class="nf on-orange">
+    <div class="wrap">
+      <h1 class="mega t">
+        <span class="mega-reveal is-in"><span>Page</span></span>
+        <span class="mega-reveal is-in not"><span>not</span><Doodle name="cross" class="nf-cross is-in" stretch /></span>
+        <span class="mega-reveal is-in"><span>found</span></span>
+      </h1>
+      <p class="lead">That link may be out of date: we moved to a new site. Try the blog, or start from the homepage.</p>
+      <div class="btn-row">
+        <a href="/" class="btn btn--solid">Go to homepage <Arrow /></a>
+        <a href="/blog" class="btn btn--ghost">Browse the blog</a>
+      </div>
+    </div>
+  </section>
+  <NewsDeck posts={posts.slice(0, 8)} title="Latest stories" id="nf-deck" />
+</Base>
+<style>
+  .nf { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space)) var(--space-l); }
+  .nf .wrap { display: grid; gap: var(--space); }
+  .t { font-size: clamp(5rem, 2rem + 16vw, 18rem); }
+  .not { position: relative; display: inline-block; overflow: visible; }
+  .not :global(.nf-cross) { position: absolute; left: -8%; top: 0; width: 116%; height: 88%; color: var(--c-white); }
+</style>

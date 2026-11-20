@@ -1,0 +1,3 @@
+# raw scrape output (regenerate with: node scripts/scrape.mjs)
+scrape/
+.DS_Store

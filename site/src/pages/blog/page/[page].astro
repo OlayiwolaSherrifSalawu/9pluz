@@ -1,0 +1,11 @@
+---
+import BlogList from '../../../components/BlogList.astro';
+import { posts, PER_PAGE } from '../../../lib/site';
+export function getStaticPaths() {
+  const last = Math.ceil(posts.length / PER_PAGE);
+  return Array.from({ length: last - 1 }, (_, i) => ({ params: { page: String(i + 2) } }));
+}
+const page = Number(Astro.params.page);
+---
+<BlogList all={posts} page={page} base="/blog" titleTag="Blog" heading="Afrobeats news, culture and music PR insights"
+  intro="Stories, explainers and interviews from the 99Pluz editorial team." />

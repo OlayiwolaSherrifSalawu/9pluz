@@ -1,0 +1,32 @@
+---
+// Original hand-drawn marks. They are drawn in when they scroll into view (see motion.ts).
+interface Props { name: 'star' | 'underline' | 'arrow' | 'cross' | 'loop' | 'balloon' | 'plus' | 'swoosh' | 'burst'; class?: string; width?: number; stretch?: boolean }
+const { name, class: cls = '', width, stretch = false } = Astro.props;
+
+const shapes: Record<Props['name'], { vb: string; d: string[] }> = {
+  star: { vb: '0 0 100 100', d: ['M50 5 C52 33 60 44 95 50 C61 55 53 64 49 95 C46 66 39 56 5 51 C38 45 47 35 50 5 Z', 'M51 12 C53 36 58 45 85 50'] },
+  underline: { vb: '0 0 240 40', d: ['M4 28 C44 14 86 10 126 16 C162 21 196 28 236 12', 'M24 34 C70 24 120 22 168 26 C190 28 206 30 222 26'] },
+  arrow: { vb: '0 0 160 100', d: ['M8 88 C24 50 60 22 104 22 C118 22 130 24 146 30', 'M122 10 C132 18 140 24 148 31 C138 38 128 46 120 56'] },
+  cross: { vb: '0 0 100 100', d: ['M10 14 C30 32 62 64 92 90', 'M90 8 C70 30 38 62 6 92', 'M14 10 C36 30 60 54 88 84'] },
+  loop: { vb: '0 0 200 110', d: ['M104 16 C150 10 194 30 190 58 C186 90 120 104 70 98 C24 92 4 66 18 40 C32 16 80 6 132 14'] },
+  balloon: { vb: '0 0 140 120', d: ['M20 14 C50 6 104 6 124 16 C136 26 136 66 122 76 C104 86 74 84 56 84 L30 108 L36 82 C20 80 8 72 8 52 C6 34 8 20 20 14 Z'] },
+  plus: { vb: '0 0 100 100', d: ['M52 8 C50 36 49 64 50 94', 'M8 50 C36 48 66 49 94 52'] },
+  swoosh: { vb: '0 0 200 60', d: ['M6 52 C14 24 44 18 80 26 C120 34 156 30 194 8'] },
+  burst: { vb: '0 0 120 120', d: ['M60 6 L60 30', 'M60 90 L60 114', 'M6 60 L30 60', 'M90 60 L114 60', 'M22 22 L38 38', 'M82 82 L98 98', 'M98 22 L82 38', 'M38 82 L22 98'] },
+};
+const s = shapes[name];
+---
+<svg class={`doodle doodle--${name} ${cls}`} viewBox={s.vb} width={width} aria-hidden="true" focusable="false" fill="none" preserveAspectRatio={stretch ? 'none' : undefined}>
+  {s.d.map((d, i) => <path d={d} pathLength="1" style={`--i:${i}`} />)}
+</svg>
+<style>
+  .doodle { pointer-events: none; overflow: visible; }
+  .doodle path {
+    stroke: currentColor; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.1s var(--ease-out) calc(var(--i) * .18s + .2s);
+  }
+  :global(.is-in) .doodle path, .doodle:global(.is-in) path { stroke-dashoffset: 0; }
+  :global(.no-js) .doodle path { stroke-dashoffset: 0; }
+  @media (prefers-reduced-motion: reduce) { .doodle path { stroke-dashoffset: 0; } }
+</style>

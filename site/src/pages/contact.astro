@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import Panel from '../components/Panel.astro';
+import ContactForm from '../components/ContactForm.astro';
+import QuoteCard from '../components/QuoteCard.astro';
+import Doodle from '../components/Doodle.astro';
+import { SITE, siteImage } from '../lib/site';
+import { TESTIMONIALS } from '../lib/content';
+---
+<Base title="Contact" description="Contact 99Pluz about Music PR, brand strategy, a blog feature or a news tip. Email info@99pluz.com or call +44 7303 170351." floatingCta={false}>
+  <section class="contact-hero on-orange">
+    <div class="wrap grid">
+      <div class="intro">
+        <p class="eyebrow">General enquiries</p>
+        <h1 class="mega title">
+          <span class="mega-reveal" data-reveal><span>Contact</span></span>
+          <span class="mega-reveal" data-reveal><span>99Pluz</span></span>
+          <Doodle name="swoosh" class="c-swoosh" />
+        </h1>
+        <p class="lead">Want to collaborate, get your music or brand featured on our blog, or send us a story? We’d love to hear from you.</p>
+        <dl class="details">
+          <div><dt>Email</dt><dd><a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></dd></div>
+          <div><dt>Phone</dt><dd><a href={SITE.phoneHref} class="ulink">{SITE.phone}</a></dd></div>
+          <div><dt>Social</dt><dd class="socials">{SITE.socials.map((s) => <a href={s.href} class="ulink" rel="noopener" target="_blank">{s.label}<span class="sr-only"> (opens in a new tab)</span></a>)}</dd></div>
+        </dl>
+      </div>
+      <div class="form-card">
+        <h2 class="form-h">Send an enquiry</h2>
+        <ContactForm id="contact" />
+      </div>
+    </div>
+  </section>
+
+  <Panel tone="black" stack={false} short label="Testimonials">
+    <div class="wrap">
+      <h2 class="display t-h">What clients say</h2>
+      <div class="quotes">
+        {TESTIMONIALS.map((t) => <QuoteCard quote={t.quote} name={t.name} role={t.role} photo={siteImage(t.photo)} />)}
+      </div>
+    </div>
+  </Panel>
+</Base>
+<style>
+  .contact-hero { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space)) var(--space-l); }
+  .grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 1000px) { .grid { grid-template-columns: 1fr 1.15fr; align-items: start; } }
+  .intro { display: grid; gap: var(--space); }
+  .title { position: relative; width: fit-content; font-size: clamp(4rem, 2rem + 9vw, 11rem); }
+  .title :global(.c-swoosh) { position: absolute; width: 80%; left: 0; bottom: -.25em; color: var(--c-white); }
+  .details { display: grid; gap: 1rem; margin: 0; }
+  .details div { display: grid; grid-template-columns: 5rem 1fr; gap: 1rem; padding-top: .75rem; border-top: 1px solid var(--c-black-20); }
+  dt { font-size: var(--fs-xs); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding-top: .2rem; }
+  dd { margin: 0; font-weight: 600; }
+  .socials { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
+  .form-card { background: var(--c-paper); padding: var(--space); border: 1px solid var(--c-ink); }
+  .form-h { font-family: var(--f-display); text-transform: uppercase; font-size: 2.25rem; line-height: 1; margin-bottom: 1.25rem; }
+  .t-h { padding-bottom: var(--space); }
+  .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--space); }
+</style>

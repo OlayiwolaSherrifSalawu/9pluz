@@ -1,0 +1,23 @@
+---
+import { visibleCategories } from '../lib/site';
+interface Props { active?: string }
+const { active = 'all' } = Astro.props;
+---
+<nav class="catbar" aria-label="Blog categories">
+  <ul class="wrap">
+    <li><a href="/blog" aria-current={active === 'all' ? 'page' : undefined}>All posts</a></li>
+    {visibleCategories.map((c) => (
+      <li><a href={`/blog/categories/${c.slug}`} aria-current={active === c.slug ? 'page' : undefined}>{c.name}</a></li>
+    ))}
+  </ul>
+</nav>
+<style>
+  :global(.header-tucked) .catbar { top: 0; }
+  .catbar { transition: top var(--dur-m) var(--ease-out); }
+  .catbar { position: sticky; top: var(--header-h); z-index: 20; background: var(--c-black); color: var(--c-white); border-bottom: 1px solid var(--c-white-30); }
+  ul { display: flex; gap: .25rem; list-style: none; overflow-x: auto; scrollbar-width: none; padding-block: .5rem; }
+  ul::-webkit-scrollbar { display: none; }
+  a { display: block; white-space: nowrap; padding: .45rem .8rem; font-size: .9375rem; font-weight: 500; text-decoration: none; border-bottom: 3px solid transparent; }
+  a:hover { border-color: var(--c-white-30); }
+  a[aria-current='page'] { border-color: var(--c-orange); color: var(--c-white); font-weight: 700; }
+</style>

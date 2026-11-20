@@ -1,0 +1,28 @@
+---
+import Arrow from './Arrow.astro';
+---
+<a href="/contact" class="float-cta" data-float-cta>
+  <span class="label">Work with us</span>
+  <Arrow />
+</a>
+<style>
+  .float-cta {
+    position: fixed; right: var(--gutter); bottom: var(--gutter); z-index: 40;
+    width: 12.5rem; height: 4.625rem;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: .75rem .9rem;
+    background: var(--c-ink); color: var(--c-white);
+    border: 1px solid var(--c-white-30);
+    text-decoration: none; font-weight: 600;
+    transition: transform .5s var(--ease-out), background-color .25s, color .25s;
+  }
+  .float-cta :global(.arrow-circle) { align-self: flex-start; animation: cta-idle 7s var(--ease-in-out) 4s infinite; }
+  @keyframes cta-idle { 0%, 86%, 100% { transform: none; } 90% { transform: translateX(4px) rotate(-12deg); } 94% { transform: translateX(-1px); } }
+  .float-cta:hover :global(.arrow-circle) { animation: none; transform: rotate(-45deg); transition: transform var(--dur-m) var(--ease-spring); }
+  .float-cta:hover { background: var(--c-orange); color: var(--c-ink); border-color: var(--c-orange); }
+  .float-cta.is-hidden { transform: translateY(calc(100% + 2rem)); }
+  @media (max-width: 640px) {
+    .float-cta { width: auto; height: 3.25rem; align-items: center; gap: .75rem; padding: .5rem .5rem .5rem 1rem; }
+    .float-cta :global(.arrow-circle) { align-self: center; }
+  }
+</style>

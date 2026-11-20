@@ -1,0 +1,131 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Panel from '../components/Panel.astro';
+import MegaTitle from '../components/MegaTitle.astro';
+import Doodle from '../components/Doodle.astro';
+import Marquee from '../components/Marquee.astro';
+import Arrow from '../components/Arrow.astro';
+import { siteImage, SITE } from '../lib/site';
+import { TEAM, PLAYLISTS } from '../lib/content';
+---
+<Base title="About" description="99Pluz is a culture-first PR agency and editorial platform that amplifies artists and brands through storytelling, curation and strategic campaigns.">
+  <PageHero eyebrow="About 99Pluz" title={['About us']} doodle="underline"
+    lead="99Pluz is a culture-first PR agency and editorial platform. We amplify artists and brands through storytelling, curation and strategic campaigns. Culture is built, not broadcast, and our work starts with listening.">
+    <div class="btn-row" slot="actions">
+      <a href="#editorial-standards" class="btn btn--solid">Editorial standards <Arrow /></a>
+      <a href="#team" class="btn btn--ghost">Meet the team</a>
+    </div>
+  </PageHero>
+
+  <Panel tone="black" label="Our approach">
+    <div class="wrap">
+      <MegaTitle lines={['Context,', 'not noise']} size="display" class="big" />
+      <div class="split cols rule-top">
+        <div class="col reveal">
+          <p class="lead">Our editorial backbone is what separates us from standard PR outfits.</p>
+          <p>Rather than treating coverage as a checklist, we create context: thoughtful reviews, playlist curation and feature stories that explain why a record, artist or brand matters. That editorial perspective feeds every campaign we run, from playlist placements and media features to influencer partnerships and live activations.</p>
+        </div>
+        <div class="col reveal">
+          <h2 class="eyebrow muted">What we do</h2>
+          <ol class="rows">
+            <li>Break down trending stories with facts, not noise</li>
+            <li>Provide timelines and explainers around cultural and political moments</li>
+            <li>Document music, performances, tours and industry shifts as they happen</li>
+            <li>Offer lifestyle and how-to content rooted in real Nigerian experiences</li>
+            <li>Track the conversations shaping society, online and offline</li>
+          </ol>
+          <p class="muted">Whether it’s a viral moment, a sensitive national issue or a major music event, our goal is to explain what happened, why it matters, and what people are missing.</p>
+        </div>
+      </div>
+    </div>
+  </Panel>
+
+  <Panel tone="grey" id="editorial-standards" label="Editorial standards">
+    <div class="wrap">
+      <div class="title-row">
+        <MegaTitle lines={['Editorial', 'standards']} size="display" class="big" />
+        <Doodle name="star" class="std-star" />
+      </div>
+      <div class="split cols rule-top">
+        <div class="col reveal">
+          <p class="lead">We publish honest, fact-checked content, and editorial independence sits at the core of our work.</p>
+          <ul class="rows">
+            <li><strong>Fact-first reporting.</strong></li>
+            <li><strong>Clear sourcing and verification.</strong></li>
+            <li><strong>Accessible language without sensationalism.</strong></li>
+            <li><strong>Cultural awareness and accountability.</strong></li>
+          </ul>
+        </div>
+        <div class="col reveal">
+          <h3 class="eyebrow">Transparency &amp; trust</h3>
+          <p>Paid campaigns and sponsored content are clearly labelled and do not determine our reviews. Stories about 99Pluz clients carry a <span class="tag tag--partner">Client</span> label at the top of the page.</p>
+          <p>We do not publish content designed to incite fear, spread misinformation or push propaganda. Every article is written with accuracy, balance and public responsibility in mind.</p>
+          <p>Spotted an error? Email <a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a>.</p>
+        </div>
+      </div>
+    </div>
+  </Panel>
+
+  <Panel tone="navy" label="Who we're for">
+    <div class="wrap">
+      <MegaTitle lines={["Who we're", 'for']} size="display" class="big" />
+      <div class="for rule-top">
+        {[
+          ['Readers', 'looking for clarity amid online chaos.'],
+          ['Music lovers', 'who want more than headlines.'],
+          ['Nigerians at home and abroad', 'looking for grounded cultural context.'],
+          ['Artists, creatives and brands', 'who value authenticity.'],
+        ].map(([a, b]) => <p class="for-item reveal"><strong>{a}</strong> {b}</p>)}
+      </div>
+    </div>
+    <div class="pl">
+      <p class="wrap eyebrow">Curated by 99Pluz</p>
+      <Marquee items={PLAYLISTS} label="99Pluz playlists" />
+    </div>
+  </Panel>
+
+  <Panel tone="black" id="team" label="Team">
+    <div class="wrap">
+      <MegaTitle lines={['The team']} size="display" class="big" />
+      <div class="team rule-top">
+        {TEAM.map((m) => (
+          <figure class="member reveal">
+            <Image src={siteImage(m.photo)} alt={`Portrait of ${m.name}`} width={600} widths={[360, 600]} sizes="(min-width: 900px) 30vw, 92vw" />
+            <figcaption>
+              <h3 class="name">{m.name}</h3>
+              <p class="role">{m.role}</p>
+              <p class="muted">{m.bio}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="contact-row rule-top">
+        <p class="lead">For editorial enquiries, partnerships or PR services, talk to us.</p>
+        <a href="/contact" class="btn btn--orange">Contact 99Pluz <Arrow /></a>
+      </div>
+    </div>
+  </Panel>
+</Base>
+<style>
+  .big { font-size: clamp(3.25rem, 1.8rem + 7vw, 9rem); padding-bottom: var(--space); }
+  .title-row { display: flex; align-items: flex-start; gap: 1rem; }
+  :global(.std-star) { width: clamp(3rem, 6vw, 6rem); color: var(--c-orange); }
+  .cols > .col { display: grid; gap: 1.25rem; align-content: start; padding-block: var(--space); }
+  @media (min-width: 900px) { .cols > .col:first-child { padding-right: var(--space); } .cols > .col + .col { padding-left: var(--space); } }
+  .rows { list-style: none; counter-reset: r; display: grid; }
+  .rows li { padding-block: .75rem; border-top: 1px solid var(--c-white-30); }
+  ol.rows li { counter-increment: r; display: grid; grid-template-columns: 2.5rem 1fr; }
+  ol.rows li::before { content: counter(r, decimal-leading-zero); font-size: var(--fs-xs); font-weight: 600; padding-top: .2rem; }
+  .for { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space); padding-top: var(--space); }
+  .for-item { font-size: var(--fs-l); line-height: 1.3; }
+  .pl { margin-top: var(--space-l); display: grid; gap: .75rem; }
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space); padding-top: var(--space); }
+  .member { margin: 0; display: grid; gap: 1rem; align-content: start; }
+  .member :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top; filter: grayscale(1); transition: filter .6s var(--ease-out); }
+  .member:hover :global(img) { filter: none; }
+  .name { font-family: var(--f-display); text-transform: uppercase; font-size: 2rem; line-height: 1; }
+  .role { color: var(--c-orange); font-weight: 600; margin-block: .25rem .5rem; }
+  .contact-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space); margin-top: var(--space-l); padding-top: var(--space); }
+</style>

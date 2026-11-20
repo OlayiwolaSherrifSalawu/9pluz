@@ -1,0 +1,289 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Panel from '../components/Panel.astro';
+import MegaTitle from '../components/MegaTitle.astro';
+import Doodle from '../components/Doodle.astro';
+import Arrow from '../components/Arrow.astro';
+import NewsDeck from '../components/NewsDeck.astro';
+import QuoteCard from '../components/QuoteCard.astro';
+import Marquee from '../components/Marquee.astro';
+import ImageTrail from '../components/ImageTrail.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { posts, postImage, siteImage, visibleCategories } from '../lib/site';
+import { TESTIMONIALS, PLAYLISTS } from '../lib/content';
+
+const ring = posts.slice(0, 12);
+const latest = posts.slice(0, 8);
+---
+<Base
+  title="99Pluz"
+  description="99Pluz is a music PR and editorial platform. We get Afrobeats artists and culture brands seen, heard and remembered through press, playlists, content and campaigns."
+>
+  <!-- 1. Hero -->
+  <Panel tone="orange" class="hero" label="Introduction">
+    <div class="wrap hero-grid">
+      <p class="eyebrow hero-eyebrow reveal">Music PR · Editorial · Brand strategy</p>
+      <h1 class="hero-title">
+        <span class="mega hero-mega">
+          <span class="mega-reveal" data-reveal><span>Get</span></span>
+          <span class="mega-reveal" data-reveal><span>heard<span class="dot">.</span></span></span>
+          <Doodle name="star" class="hero-star" />
+          <Doodle name="underline" class="hero-underline" />
+        </span>
+        <span class="lead hero-lead reveal">Music PR, editorial coverage and brand strategy for Afrobeats artists and culture brands.</span>
+      </h1>
+      <div class="btn-row hero-ctas reveal">
+        <a href="/contact" class="btn btn--solid">Work with us <Arrow /></a>
+        <a href="/blog" class="btn btn--ghost">Read the blog</a>
+      </div>
+    </div>
+    <div class="ring" data-ring aria-hidden="true">
+      {ring.map((p, i) => (
+        <div class="ring-card" style={`--i:${i}`} data-i={i}>
+          <Image src={postImage(p.cover)} alt="" width={360} loading={i < 5 ? 'eager' : 'lazy'} />
+        </div>
+      ))}
+    </div>
+  </Panel>
+
+  <!-- 2. Services -->
+  <Panel tone="black" label="Services">
+    <div class="wrap">
+      <div class="title-row">
+        <MegaTitle lines={['What', 'we do']} />
+        <Doodle name="arrow" class="services-arrow" />
+      </div>
+      <div class="split services rule-top">
+        <article class="service reveal">
+          <p class="num">01</p>
+          <h3 class="display">Music PR</h3>
+          <div class="service-media" data-parallax>
+            <Image src={siteImage('music-pr.jpg')} alt="An artist in sunglasses holding headphones up to the camera" width={800} widths={[480, 800]} sizes="(min-width: 900px) 45vw, 92vw" class="service-img" />
+          </div>
+          <p class="lead">Press, playlists and campaigns that put your music in front of the right audience.</p>
+          <ul class="offer">
+            <li>Press &amp; media features</li>
+            <li>Editorial playlist placement</li>
+            <li>Chart placements &amp; visibility campaigns</li>
+            <li>Event media coverage</li>
+            <li>Bespoke content creation</li>
+          </ul>
+          <a href="/music-pr" class="btn btn--ghost">Explore Music PR <Arrow /></a>
+        </article>
+        <article class="service reveal">
+          <p class="num">02</p>
+          <h3 class="display">Brand &amp; Creative Strategy</h3>
+          <div class="service-media" data-parallax>
+            <Image src={siteImage('brand-strategy.jpg')} alt="A desk with a disco ball and a sign reading 'PR makes brands impossible to ignore'" width={800} widths={[480, 800]} sizes="(min-width: 900px) 45vw, 92vw" class="service-img" />
+          </div>
+          <p class="lead">Identity, campaigns and content that make brands feel right to the people they serve.</p>
+          <ul class="offer">
+            <li>Rebranding &amp; identity development</li>
+            <li>Social media campaigns</li>
+            <li>Ad content creation</li>
+            <li>Events coverage</li>
+            <li>Bespoke campaigns</li>
+          </ul>
+          <a href="/brand-strategy" class="btn btn--ghost">Explore Brand Strategy <Arrow /></a>
+        </article>
+      </div>
+    </div>
+  </Panel>
+
+  <!-- 3. Blog -->
+  <Panel tone="navy" label="Latest from the blog">
+    <div class="wrap">
+      <div class="title-row">
+        <MegaTitle lines={['The blog']} />
+        <Doodle name="star" class="blog-star" />
+      </div>
+      <div class="blog-intro rule-top">
+        <p class="lead">Afrobeats news, culture and music PR insights. Explainers when the timeline gets loud.</p>
+        <ul class="cat-links">
+          {visibleCategories.slice(0, 7).map((c) => <li><a class="tag" href={`/blog/categories/${c.slug}`}>{c.name}</a></li>)}
+        </ul>
+      </div>
+    </div>
+    <NewsDeck posts={latest} title="Latest stories" id="home-deck" tone="light" moreHref="/blog" moreLabel={`See all ${posts.length} stories`} />
+    <div hidden>
+    </div>
+  </Panel>
+
+  <!-- 4. Editorial standards -->
+  <Panel tone="grey" label="How we work">
+    <div class="wrap">
+      <div class="title-row">
+        <MegaTitle lines={['Fact', 'first']} />
+        <Doodle name="loop" class="fact-loop" />
+      </div>
+      <div class="principles">
+        {[
+          ['Sourced', 'Clear sourcing and verification, so you can check the claims yourself.'],
+          ['Labelled', 'Paid campaigns and sponsored stories are labelled, and they never decide our reviews.'],
+          ['Plain', 'Accessible language without sensationalism: what happened, and why it matters.'],
+          ['Accountable', 'Cultural awareness and public responsibility in every story we publish.'],
+        ].map(([t, d], i) => (
+          <div class="principle rule-top reveal">
+            <p class="num">0{i + 1}</p>
+            <h3 class="display">{t}</h3>
+            <p>{d}</p>
+          </div>
+        ))}
+      </div>
+      <a href="/about#editorial-standards" class="btn btn--ghost">Read our editorial standards <Arrow /></a>
+    </div>
+    <div class="playlists">
+      <p class="wrap eyebrow">Our playlists</p>
+      <Marquee items={PLAYLISTS} label="99Pluz playlists" />
+    </div>
+  </Panel>
+
+  <!-- 5. Testimonials -->
+  <Panel tone="black" label="Testimonials">
+    <div class="wrap">
+      <div class="title-row">
+        <MegaTitle lines={['They', 'said']} />
+        <Doodle name="balloon" class="said-balloon" />
+      </div>
+      <div class="quotes">
+        {TESTIMONIALS.map((t) => <QuoteCard quote={t.quote} name={t.name} role={t.role} photo={siteImage(t.photo)} />)}
+      </div>
+    </div>
+  </Panel>
+
+  <!-- 6. Join -->
+  <Panel tone="orange" class="join" label="Work with us">
+    <ImageTrail>
+      <div class="wrap join-inner">
+        <div class="title-row">
+          <MegaTitle lines={["Let's", 'talk']} />
+          <Doodle name="loop" class="talk-loop" />
+        </div>
+        <div class="split join-split rule-top">
+          <div class="join-col">
+            <p class="lead">Releasing a single, building a brand or planning a campaign? Tell us what you’re working on.</p>
+            <div class="btn-row">
+              <a href="/contact" class="btn btn--solid">Start a project <Arrow /></a>
+              <a href="mailto:info@99pluz.com" class="btn btn--ghost">info@99pluz.com</a>
+            </div>
+          </div>
+          <div class="join-col">
+            <Newsletter />
+          </div>
+        </div>
+      </div>
+    </ImageTrail>
+  </Panel>
+</Base>
+
+<style>
+  /* hero */
+  .hero { display: flex; flex-direction: column; justify-content: space-between; overflow: clip; }
+  .hero-grid { position: relative; display: grid; gap: var(--space); }
+  .hero-title { display: grid; gap: calc(var(--space) * 1.8); }
+  .hero-title .mega { font-size: clamp(6rem, 3rem + 20vw, 22rem); }
+  .dot { color: var(--c-white); display: inline-block; transform-origin: 50% 80%; animation: beat 1.2s var(--ease-out) 1.6s infinite; }
+  @keyframes beat { 0%, 100% { transform: scale(1); } 12% { transform: scale(1.35, .85); } 28% { transform: scale(.95, 1.05); } 45% { transform: scale(1); } }
+  .hero-lead { max-width: 30ch; font-weight: 500; }
+  .hero-mega { position: relative; width: fit-content; }
+  .hero-mega .mega-reveal { display: inline-block; vertical-align: top; }
+  .hero-mega :global(.hero-star) { position: absolute; width: .26em; right: -.06em; top: -.3em; color: var(--c-white); }
+  @media (max-width: 600px) { .hero-mega :global(.hero-star) { right: -.05em; top: -.3em; width: .26em; } }
+  .hero-mega :global(.hero-underline) { position: absolute; width: 70%; left: 2%; bottom: -.1em; color: var(--c-white); }
+  .ring { position: relative; height: clamp(14rem, 26vw, 26rem); margin-top: var(--space); }
+  .ring-card {
+    --x: calc(var(--i) * clamp(8.5rem, 15vw, 16rem) + var(--drift, 0px));
+    position: absolute; left: 50%; top: 0;
+    width: clamp(8rem, 14vw, 15rem); aspect-ratio: 1;
+    border: 1px solid var(--c-ink);
+    background: var(--c-ink);
+    transform: translateX(calc(-50% + var(--x))) translateY(var(--y, 0px)) rotate(var(--r, 0deg));
+  }
+  .ring-card :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ring-card { opacity: 0; transition: opacity .8s var(--ease-out); transition-delay: calc(var(--i) * 70ms + 400ms); }
+  .ring.is-live .ring-card { opacity: 1; }
+  .ring-card:hover { z-index: 2; }
+
+  /* shared */
+  .title-row { position: relative; display: flex; align-items: flex-end; gap: var(--space); padding-bottom: var(--space); }
+  .num { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; }
+
+  /* services */
+  :global(.services-arrow) { width: clamp(5rem, 12vw, 11rem); color: var(--c-orange); margin-bottom: 1rem; }
+  .service { display: flex; flex-direction: column; gap: 1.25rem; padding-block: var(--space); }
+  .services > .service:first-child { padding-right: var(--space); }
+  .services > .service + .service { padding-left: var(--space); }
+  .service-media { overflow: hidden; aspect-ratio: 4 / 3; }
+  .service-media :global(.service-img) { width: 100%; height: 100%; object-fit: cover; transform: translate3d(0, var(--py, 0px), 0) scale(1.18); filter: grayscale(1) contrast(1.05); transition: filter .8s var(--ease-out); }
+  .service:hover .service-media :global(.service-img) { filter: none; }
+  .offer { list-style: none; display: grid; }
+  .offer li { padding-block: .6rem; border-top: 1px solid var(--c-white-30); }
+  .service .btn { margin-top: auto; align-self: flex-start; }
+  @media (max-width: 899px) {
+    .services > .service:first-child { padding-right: 0; }
+    .services > .service + .service { padding-left: 0; border-top: 1px solid var(--c-white-30); }
+  }
+
+  /* blog */
+  :global(.blog-star) { width: clamp(3rem, 7vw, 7rem); color: var(--c-orange); align-self: flex-start; }
+  .blog-intro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space); padding-block: var(--space); }
+  .cat-links { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; align-content: flex-start; max-width: 36rem; }
+  .cat-links .tag:hover { background: var(--c-white); color: var(--c-navy); }
+
+  /* standards */
+  :global(.fact-loop) { position: absolute; left: -1%; bottom: 0; width: clamp(14rem, 40vw, 40rem); color: var(--c-orange); }
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space); padding-bottom: var(--space); }
+  .principle { display: grid; gap: .75rem; align-content: start; padding-top: 1rem; }
+  .principle .display { font-size: clamp(2.25rem, 1.5rem + 2vw, 3.75rem); }
+  .principle p:last-child { color: var(--c-white-60); }
+  .playlists { margin-top: var(--space-l); display: grid; gap: .75rem; }
+
+  /* testimonials */
+  :global(.said-balloon) { width: clamp(5rem, 11vw, 10rem); color: var(--c-orange); align-self: flex-start; }
+  .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--space); }
+
+  /* join */
+  .join { display: flex; flex-direction: column; }
+  .join :global(.trail) { flex: 1; }
+  :global(.talk-loop) { position: absolute; left: 0; bottom: 0; width: clamp(14rem, 44vw, 42rem); color: var(--c-white); }
+  .join-split { padding-top: var(--space); }
+  .join-col { display: grid; gap: var(--space); align-content: start; padding-block: var(--space); }
+  @media (min-width: 900px) { .join-col + .join-col { padding-left: var(--space); } .join-col:first-child { padding-right: var(--space); } }
+</style>
+
+<script>
+  // Hero ring: an endless loop of covers riding a shallow curve.
+  // It always drifts, scrolling pushes it faster (in the scroll direction), hovering slows it right down.
+  const ring = document.querySelector<HTMLElement>('[data-ring]');
+  if (ring) {
+    const cards = [...ring.querySelectorAll<HTMLElement>('.ring-card')];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const n = cards.length;
+    let offset = 0;
+    let speed = 0.035; // px per ms
+    let hover = false;
+    ring.addEventListener('pointerenter', () => (hover = true));
+    ring.addEventListener('pointerleave', () => (hover = false));
+    let last = performance.now();
+    const place = (now: number) => {
+      const dt = Math.min(64, now - last); last = now;
+      const s = (window as any).__scroll;
+      const target = hover ? 0.006 : 0.035 + (s ? Math.abs(s.v) * 0.6 : 0);
+      speed += (target - speed) * 0.06;
+      const dirn = s && s.dir === -1 ? 1 : -1;
+      if (!reduce) offset += dirn * speed * dt;
+      const w = innerWidth;
+      const step = Math.min(Math.max(w * 0.15, 140), 256);
+      const span = step * n;
+      for (const c of cards) {
+        const i = Number(c.dataset.i);
+        let x = ((i * step + offset) % span + span) % span - span / 2;
+        const nx = x / (w * 0.55);
+        c.style.transform = `translateX(calc(-50% + ${x.toFixed(1)}px)) translateY(${(nx * nx * 70).toFixed(1)}px) rotate(${(nx * 10).toFixed(2)}deg)`;
+      }
+      if (!reduce) requestAnimationFrame(place);
+    };
+    requestAnimationFrame((t) => { last = t; place(t); ring.classList.add('is-live'); });
+  }
+</script>

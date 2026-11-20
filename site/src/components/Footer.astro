@@ -1,0 +1,62 @@
+---
+import { NAV, SITE, visibleCategories } from '../lib/site';
+import Doodle from './Doodle.astro';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer" data-reveal-group>
+  <div class="wrap">
+    <div class="top">
+      <p class="mega foot-mega" aria-hidden="true" data-reveal>{"99Pluz".split("").map((c, i) => <span class="ch" style={`--i:${i}`}>{c}</span>)}<Doodle name="plus" class="foot-plus" /></p>
+      <p class="lead">Music PR, editorial coverage and brand strategy for Afrobeats artists and culture brands.</p>
+    </div>
+    <div class="cols">
+      <nav aria-label="Footer">
+        <h2 class="eyebrow muted">Site</h2>
+        <ul>
+          <li><a href="/" class="ulink">Home</a></li>
+          {NAV.map((n) => <li><a href={n.href} class="ulink">{n.label}</a></li>)}
+          <li><a href="/careers" class="ulink">Careers</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="eyebrow muted">Read</h2>
+        <ul>
+          {visibleCategories.slice(0, 6).map((c) => <li><a href={`/blog/categories/${c.slug}`} class="ulink">{c.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h2 class="eyebrow muted">Contact</h2>
+        <ul>
+          <li><a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></li>
+          <li><a href={SITE.phoneHref} class="ulink">{SITE.phone}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="eyebrow muted">Follow</h2>
+        <ul>
+          {SITE.socials.map((s) => <li><a href={s.href} class="ulink" rel="noopener" target="_blank">{s.label}<span class="sr-only"> (opens in a new tab)</span></a></li>)}
+        </ul>
+      </div>
+    </div>
+    <div class="base">
+      <p>© {year} 99Pluz. Sponsored and client content is always labelled.</p>
+      <p><a href="/privacy-policy" class="ulink">Privacy Policy</a> · <a href="/about#editorial-standards" class="ulink">Editorial standards</a></p>
+    </div>
+  </div>
+</footer>
+<style>
+  .site-footer { position: relative; z-index: 5; background: var(--c-black); border-top: 1px solid var(--c-white-30); padding-block: var(--space-l) calc(var(--space) + 5rem); }
+  .top { display: grid; gap: var(--space); align-items: end; padding-bottom: var(--space); }
+  .foot-mega { position: relative; width: fit-content; color: var(--c-orange); cursor: default; }
+  .ch { display: inline-block; opacity: 0; transform: translateY(.35em) rotate(6deg); transform-origin: 0 100%;
+    transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-xl) var(--ease-out); transition-delay: calc(var(--i) * 70ms); }
+  .foot-mega:global(.is-in) .ch { opacity: 1; transform: none; }
+  .foot-mega:hover .ch { animation: wave 700ms var(--ease-out) calc(var(--i) * 55ms); }
+  @keyframes wave { 40% { transform: translateY(-.12em) rotate(-3deg); color: var(--c-white); } }
+  .foot-mega :global(.foot-plus) { position: absolute; right: -.45em; top: -.05em; width: .5em; color: var(--c-white); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--space); padding-block: var(--space); border-top: 1px solid var(--c-white-30); }
+  .cols ul { list-style: none; display: grid; gap: .5rem; margin-top: .75rem; }
+  .cols a { text-decoration: none; }
+  .base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-top: var(--space); border-top: 1px solid var(--c-white-30); font-size: var(--fs-xs); color: var(--c-white-60); }
+  @media (min-width: 900px) { .top { grid-template-columns: auto 1fr; } .top .lead { justify-self: end; } }
+</style>
