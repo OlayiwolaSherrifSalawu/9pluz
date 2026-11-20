@@ -7,7 +7,7 @@ The blog works and every link loads. The problems are in trust, findability, spe
 
 ## The four things to fix first
 
-1. **Delete the staff writing notes** that appear on the Sports, Politics and Tech category pages.
+1. **Delete the staff writing notes** in the Sports, Politics and Tech category descriptions, which Google shows in search results.
 2. **Label paid client posts**, as the About page already promises.
 3. **Link to sources** in news and fact-check articles.
 4. **Remove or hide the 14 "copy-of" draft pages** that Google can currently find.
@@ -15,7 +15,7 @@ The blog works and every link loads. The problems are in trust, findability, spe
 | Severity | Count |
 |---|---|
 | High | 5 |
-| Medium | 9 |
+| Medium | 7 |
 | Low | 5 |
 
 ---
@@ -24,13 +24,13 @@ The blog works and every link loads. The problems are in trust, findability, spe
 
 These issues affect how readers, clients and Google judge whether the blog is a reliable source. They matter most because 99Pluz sells PR on the strength of its editorial reputation.
 
-### 🔴 High: Internal writing notes are visible to the public
+### 🔴 High: Internal writing notes show up in Google results
 
 The Sports category description reads like a brief for writers. It isn't shown on the page itself, but it sits in the page code and is what Google shows in search results:
 
 > Tone: energetic but clear; celebrate performance, examine systems… Content types: match recaps, nominee lists, player milestones, short explainers. Goal: drive fandom and context.
 
-The Politics page also starts its tone notes ("Tone: anal…"). The Tech page ends with "Curious, forward-looking, and grounded in real human impact." Anyone who finds these pages through Google reads these notes first.
+The Politics description also opens with tone notes for writers. The Tech page ends with "Curious, forward-looking, and grounded in real human impact." Anyone who finds these pages through Google reads these notes first.
 
 **Fix:** In Wix Blog, open Categories and rewrite each description for readers. Move the writing guidance into an internal style guide.
 
@@ -190,7 +190,7 @@ Each item names the design area it belongs to: hierarchy, brand, composition, ty
 ### P1: Critical, fix first
 
 - [ ] **A pop-up blocks every page on arrival.** The "Get Monthly Updates" pop-up covers the whole screen before any content, and fills the entire display on phones. Seen on Home, Blog, articles, Contact and Brand. *Affordance.* **Fix:** show it after half the page is scrolled, once per visitor, as a small bar on phones.
-- [ ] **Orange text on white fails contrast.** This affects About headings, service headings, orange italic "Deliverables" text and form labels. White text on orange buttons such as "View Details", "Explore" and "Start Now" fails too. *Colour.* **Fix:** keep brand orange for fills and dark backgrounds. On white, use a darker orange of about #b85a12 for text, and put dark text on orange buttons, as "Get In Touch" already does.
+- [ ] **Orange text on white fails contrast.** This affects About headings, service headings, orange italic "Deliverables" text and form labels. White text on orange buttons such as "View Details", "Explore" and "Start Now" fails too. *Colour.* **Fix:** keep brand orange for fills and dark backgrounds. On white, use a darker orange of about #b85a12 for text, and put dark text on orange buttons, as "Get In Touch" already does. #b85a12 only just passes, so don't go any lighter.
 - [ ] **The category bar on article pages is unreadable.** It is grey text on orange, on desktop and phone. *Colour.* **Fix:** use a black bar with white text and an orange marker for the active category.
 - [ ] **The testimonial slider is broken on Contact and Brand.** A stray blue bar sits above it, a pink arrow floats out of place, and the left arrow runs through the person's name. *Composition.* **Fix:** replace it with simple quote cards showing a photo, name and role.
 - [ ] **About text breaks mid-sentence.** The copy was pasted with hard line breaks, so lines end at "brands", "not" and "coverage". It looks broken on phones. *Typography.* **Fix:** re-paste it as plain paragraphs.
@@ -214,10 +214,10 @@ Each item names the design area it belongs to: hierarchy, brand, composition, ty
 - [ ] **Articles are hard to read.** Lines run about 95 characters wide, with no space between paragraphs, so the text becomes a wall. *Typography.* **Fix:** limit lines to about 70 characters, add space between paragraphs, and use 18px body text.
 - [ ] **On phones, articles start too low.** The header plus two bars take up about a third of the first screen, and the AI chat bubble covers the lead image. *Density.* **Fix:** move categories into the menu, and remove or shrink the chat bubble on articles.
 - [ ] **Service grids are misaligned.** Buttons sit at different heights and fifth cards are left on their own. Icons come from different sets, including a hand-drawn champagne glass and a hotel bell for chart placements. *Composition.* **Fix:** use equal-height cards with buttons pinned to the bottom and one icon set.
-- [ ] **The Contact page buries its form.** The heading says "General Services" while the menu says Enquiries. A green Scrabble stock photo clashes with the brand, and a small form sits below two testimonials. *Hierarchy.* **Fix:** put the form and the email and phone details first.
+- [ ] **The Contact page buries its form.** The heading says "General Services" while the menu says Enquiries. A green Scrabble stock photo clashes with the brand, and a small form sits below two testimonials. *Hierarchy.* **Fix:** put the form and the email and phone details first. The label mismatch is also covered in Area 2.
 - [ ] **The consultation forms are cluttered.** Social icons sit between the fields, labels are small orange text, required fields aren't marked, and "Campaings" is misspelt. *Affordance.* **Fix:** remove the icons, use dark labels at 14px or larger, and mark required fields.
-- [ ] **The Careers page looks unbranded.** Its headline is literally "Careers Page". Job cards use pink-purple and yellow-green gradients, half the row is empty, and roles have no details. *Brand.* **Fix:** use brand colours, add a role summary, and give each listing its own page.
-- [ ] **Empty categories have a large banner.** Events shows a big photo banner, then "Posts Coming Soon". *Density.* **Fix:** hide categories until they have posts.
+- [ ] **The Careers page looks unbranded.** Its headline is literally "Careers Page". Job cards use pink-purple and yellow-green gradients, half the row is empty, and roles have no details. *Brand.* **Fix:** use brand colours, add a role summary, and give each listing its own page. See also Area 4.
+- [ ] **Empty categories have a large banner.** Events shows a big photo banner, then "Posts Coming Soon". *Density.* **Fix:** hide categories until they have posts, as in Area 2.
 - [ ] **The footer is thin.** The logo is clipped at the top, there are only two links, and the phone footer has no contact details or links. *Composition.* **Fix:** add menu links, contact details and the Privacy Policy to every footer.
 
 ### P3: Polish
@@ -251,8 +251,8 @@ Ordered by impact. The first twelve come from Areas 1 to 4, and the last six are
 - [ ] Hide empty categories and reorder the category bar · *Website*
 - [ ] Raise posts per page to 12 or more · *Website*
 - [ ] Run a speed check and remove unused apps · *Website*
-- [ ] Add alt text to images and fix the two typos · *Editorial*
-- [ ] Publish an Editorial Standards page and fuller author bios · *Leadership*
+- [ ] Add alt text to images and fix the typos · *Editorial*
+- [ ] Publish an Editorial Standards page and fuller author bios, and decide which topics the blog covers · *Leadership*
 - [ ] Delay the newsletter pop-up and make it a small bar on phones · *Website*
 - [ ] Fix orange-on-white text and white-on-orange buttons for contrast · *Design*
 - [ ] Repair the testimonial slider on Contact and Brand · *Website*
