@@ -1,0 +1,121 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/about-3",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/services-2",
+      "destination": "/music-pr",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-services",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/contact-7",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/coming-soon-01",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/s-projects-side-by-side",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/s-projects-basic-1",
+      "destination": "/music-pr",
+      "permanent": true
+    },
+    {
+      "source": "/about-4",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/inquiry-services-page",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-press-media-features",
+      "destination": "/music-pr",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-press-media-features-1",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-press-media-features-2",
+      "destination": "/music-pr",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-events-coverage",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-events-coverage-1",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-events-coverage-2",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-brand-events-coverage",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-ads-content-creation",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-brand-press-media-page",
+      "destination": "/brand-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-editorial-playlist-recommenda",
+      "destination": "/music-pr",
+      "permanent": true
+    },
+    {
+      "source": "/copy-of-blog-writer-page",
+      "destination": "/careers",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
