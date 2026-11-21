@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import NewsDeck from '../../components/NewsDeck.astro';
+import Arrow from '../../components/Arrow.astro';
+import { type Post, posts, postImage, categoryName, formatDate, relatedPosts, inlineHtml, SITE } from '../../lib/site';
+
+export function getStaticPaths() {
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+const { post } = Astro.props as { post: Post };
+const cover = postImage(post.cover);
+const sameCat = relatedPosts(post, 8);
+const more = [...sameCat, ...posts.filter((p) => p.slug !== post.slug && !sameCat.includes(p))].slice(0, 8);
+const cat = post.categories[0];
+const original = `https://www.99pluz.com/post/${post.slug}`;
+
+// Group consecutive list items so they render inside one <ul>
+type Group = { type: string; text?: string; file?: string; alt?: string; items?: string[] };
+const groups: Group[] = [];
+for (const b of post.body ?? []) {
+  const prev = groups[groups.length - 1];
+  if (b.type === 'li') {
+    if (prev?.type === 'ul') prev.items!.push(b.text!);
+    else groups.push({ type: 'ul', items: [b.text!] });
+  } else groups.push(b);
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.description,
+  datePublished: post.published,
+  author: { '@type': 'Person', name: SITE.defaultAuthor },
+  publisher: { '@type': 'Organization', name: '99Pluz', url: 'https://www.99pluz.com' },
+  mainEntityOfPage: `https://www.99pluz.com/post/${post.slug}`,
+};
+---
+<Base title={post.title} description={post.description || post.title} image={cover} type="article" jsonLd={jsonLd}>
+  <article>
+    <header class="post-head ui-orange" data-theme="orange">
+      <div class="wrap head-grid">
+        <div class="head-text">
+          <nav class="crumbs" aria-label="Breadcrumb">
+            <a href="/blog" class="ulink">Blog</a> <span aria-hidden="true">/</span>
+            <a href={`/blog/categories/${cat}`} class="ulink">{categoryName(cat)}</a>
+          </nav>
+          <h1 class="post-title">{post.title}</h1>
+          {post.description && <p class="lead">{post.description}</p>}
+          <p class="byline">
+            <span>By <a href="/about#team" class="ulink">{SITE.defaultAuthor}</a></span>
+            <time datetime={post.published}>{formatDate(post.published)}</time>
+            {post.minutes && <span>{post.minutes} min read</span>}
+          </p>
+        </div>
+        <Image src={cover} alt={post.coverAlt} width={1080} widths={[480, 720, 1080]} sizes="(min-width: 900px) 40vw, 92vw" loading="eager" class="hero-img" />
+      </div>
+    </header>
+
+    <div class="reading" data-theme="paper">
+      {post.partner && (
+        <aside class="disclosure" aria-label="Disclosure">
+          <span class="tag tag--partner">Client</span>
+          <p>This story features a 99Pluz client. Paid campaigns and sponsored content are labelled and do not decide our reviews. <a href="/about#editorial-standards">Our editorial standards</a></p>
+        </aside>
+      )}
+
+      {post.body ? (
+        <div class="prose">
+          {groups.map((b) => {
+            if (b.type === 'img') return <figure><Image src={postImage(b.file!)} alt={b.alt || `Image from ‘${post.title}’`} width={1080} widths={[480, 720, 1080]} sizes="(min-width: 800px) 720px, 92vw" /></figure>;
+            if (b.type === 'ul') return <ul>{b.items!.map((t) => <li set:html={inlineHtml(t)} />)}</ul>;
+            if (b.type === 'h2' || b.type === 'h1') return <h2 set:html={inlineHtml(b.text!)} />;
+            if (b.type === 'h3' || b.type === 'h4') return <h3 set:html={inlineHtml(b.text!)} />;
+            if (b.type === 'blockquote') return <blockquote><p set:html={inlineHtml(b.text!)} /></blockquote>;
+            return <p set:html={inlineHtml(b.text!)} />;
+          })}
+        </div>
+      ) : (
+        <div class="prose migrating">
+          <p>{post.description}</p>
+          <p class="note">The full text of this story is moving to the new site. Until then you can <a href={original}>read it on the current 99Pluz site</a>.</p>
+        </div>
+      )}
+
+      {post.sources.length > 0 && (
+        <section class="sources" aria-labelledby="sources-h">
+          <h2 id="sources-h">Sources</h2>
+          <ol>{post.sources.map((s) => <li><a href={s.url} rel="noopener">{s.label}</a></li>)}</ol>
+        </section>
+      )}
+
+      <footer class="post-foot">
+        <p>Have a story, a correction or a release we should hear? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+        <div class="share">
+          <a class="btn btn--ghost" href={`https://x.com/intent/post?url=${encodeURIComponent(original)}&text=${encodeURIComponent(post.title)}`} rel="noopener" target="_blank">Share on X<span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="btn btn--ghost" href={`https://wa.me/?text=${encodeURIComponent(post.title + ' ' + original)}`} rel="noopener" target="_blank">Share on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+      </footer>
+    </div>
+  </article>
+
+  <NewsDeck posts={more} title="More news" id="more-news" moreHref={`/blog/categories/${cat}`} moreLabel={`All ${categoryName(cat)} stories`} />
+</Base>
+
+<style>
+  .post-head { padding-block: calc(var(--header-h) + var(--spacing) * 2) calc(var(--R) * 5); }
+  .head-grid { display: grid; gap: var(--space); align-items: end; }
+  @media (min-width: 900px) { .head-grid { grid-template-columns: 1.3fr 1fr; } }
+  .head-text { display: grid; gap: calc(var(--R) * 2.4); }
+  .head-text .lead { color: #fff; max-width: 30em; }
+  .crumbs { font-size: calc(var(--R) * 1.3); display: flex; gap: .5rem; color: #fff; }
+  .crumbs a { text-decoration: none; }
+  .post-title { font-family: var(--f-display); text-transform: uppercase; color: #000; font-size: clamp(4rem, 2rem + 5vw, 11rem); line-height: .9; text-wrap: balance; }
+  .byline { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: calc(var(--R) * 1.3); color: #fff; padding-top: calc(var(--R) * 1.5); border-top: 1px solid var(--t-line); }
+  .hero-img { width: 100%; aspect-ratio: 1; object-fit: cover; border: calc(var(--R) * 1.2) solid #000; rotate: 2deg; }
+
+  .reading { background: var(--c-paper); color: var(--c-ink); padding: var(--space-l) var(--gutter); }
+  .reading > * { max-width: var(--measure); margin-inline: auto; }
+  .disclosure { display: flex; gap: 1rem; align-items: flex-start; padding: 1rem 1.25rem; margin-bottom: var(--space); border: 1px solid var(--c-ink); background: var(--c-white); font-size: var(--fs-s); }
+  .disclosure a, .prose a, .post-foot a, .sources a { color: var(--c-orange-text); font-weight: 600; text-underline-offset: 3px; }
+  .prose { font-size: 1.125rem; line-height: 1.7; letter-spacing: -.01em; font-weight: 400; }
+  .prose > * + * { margin-top: 1.25em; }
+  .prose h2 { font-family: var(--f-display); text-transform: uppercase; font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem); line-height: 1.05; margin-top: 2em; }
+  .prose h3 { font-weight: 700; font-size: 1.375rem; margin-top: 1.75em; }
+  .prose ul { padding-left: 1.25rem; display: grid; gap: .35em; }
+  .prose li::marker { color: var(--c-orange-text); }
+  .prose blockquote { margin-inline: 0; padding-left: 1.25rem; border-left: 4px solid var(--c-orange); font-size: 1.375rem; line-height: 1.4; font-weight: 600; }
+  .prose figure { margin-inline: 0; }
+  .prose figure :global(img) { width: 100%; }
+  .note { padding: 1rem 1.25rem; border-left: 4px solid var(--c-orange); background: var(--c-white); }
+  .sources { margin-top: var(--space); padding-top: var(--space); border-top: 1px solid var(--c-ink); }
+  .sources h2 { font-weight: 700; font-size: 1.25rem; }
+  .sources ol { margin-top: .75rem; padding-left: 1.25rem; display: grid; gap: .5rem; }
+  .post-foot { margin-top: var(--space-l); padding-top: var(--space); border-top: 1px solid var(--c-ink); display: grid; gap: 1rem; }
+  .share { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+</style>

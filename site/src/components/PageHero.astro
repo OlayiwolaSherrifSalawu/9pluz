@@ -1,0 +1,47 @@
+---
+// Inner-page intro: full-bleed wordmark (unfolds on load) + hairline + lead, optional photo card on a brush circle.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Doodle from './Doodle.astro';
+import Wordmark from './Wordmark.astro';
+import type { DoodleName } from '../lib/doodles';
+interface Props { eyebrow: string; title: string[]; lead: string; image?: ImageMetadata; imageAlt?: string; doodle?: DoodleName }
+const { eyebrow, title, lead, image, imageAlt = '', doodle = 'sparkle' } = Astro.props;
+---
+<section class="page-hero panel ui-orange" data-stack data-theme="orange">
+  <div class="wrap">
+    <p class="eyebrow ph-eyebrow">{eyebrow}</p>
+    <Wordmark text={title.join(' ')} as="h1" tone="black" intro>
+      <span class="ph-deco" aria-hidden="true"><Doodle name={doodle} still /></span>
+    </Wordmark>
+  </div>
+  <div class={`wrap split rule-top ph-body ${image ? 'has-img' : ''}`}>
+    <div class="ph-text">
+      <p class="text-lead ph-lead">{lead}</p>
+      <div class="ph-actions"><slot name="actions" /></div>
+    </div>
+    {image && (
+      <div class="ph-media">
+        <span class="ph-brush" aria-hidden="true"></span>
+        <Image src={image} alt={imageAlt} width={900} widths={[480, 720, 900]} sizes="(min-width: 668px) 40vw, 90vw" loading="eager" class="ph-img" />
+      </div>
+    )}
+  </div>
+</section>
+<style>
+  .page-hero { min-height: auto; padding-bottom: calc(var(--R) * 6); }
+  .ph-eyebrow { margin-bottom: calc(var(--R) * 1.5); color: var(--t-small); }
+  .ph-deco { position: absolute; right: 0; top: -12%; width: min(9%, 1.2em); color: #fff; transform: translateY(300%) rotate(35deg); transition: transform var(--dur-hero) var(--ease-heavy) 1s; }
+  :global(.intro--show) .ph-deco, :global(.no-js) .ph-deco { transform: rotate(-8deg); }
+  .ph-body { margin-top: calc(var(--R) * 4); }
+  .ph-body:not(.has-img) { grid-template-columns: 1fr; }
+  .ph-body:not(.has-img) > * + * { border-left: 0; }
+  .ph-text { display: grid; gap: calc(var(--R) * 3); align-content: start; padding-block: var(--spacing); padding-right: var(--spacing); transform: translateY(40px); opacity: 0; transition: transform var(--dur-hero) var(--ease-heavy) .4s, opacity var(--dur-hero) var(--ease-heavy) .4s; }
+  :global(.intro--show) .ph-text, :global(.no-js) .ph-text { transform: none; opacity: 1; }
+  .ph-lead { max-width: 18em; color: #fff; }
+  .ph-media { position: relative; display: grid; place-items: center; padding: calc(var(--R) * 5); transform: translateY(100%) rotate(35deg); transition: transform var(--dur-hero) var(--ease-heavy) 1s; }
+  :global(.intro--show) .ph-media, :global(.no-js) .ph-media { transform: none; }
+  .ph-brush { position: absolute; inset: 0 8%; background: url('/brush-circle.svg') center / contain no-repeat; }
+  .ph-img { position: relative; width: min(100%, 44rem); aspect-ratio: 4 / 3; object-fit: cover; rotate: -4deg; }
+  @media (prefers-reduced-motion: reduce) { .ph-text, .ph-media, .ph-deco { transform: none; opacity: 1; } }
+</style>

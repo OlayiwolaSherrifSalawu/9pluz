@@ -1,0 +1,23 @@
+---
+// Fixed black button, bottom-right (spec §6.5): label bottom-left, circled arrow top-right.
+import Arrow from './Arrow.astro';
+---
+<a href="/contact" class="float-cta" data-float-cta>
+  <span class="label">Work with us</span>
+  <Arrow />
+</a>
+<style>
+  .float-cta {
+    position: fixed; right: var(--spacing); bottom: var(--spacing); z-index: 40;
+    width: max(159px, 15.07vw); height: max(59px, 5.6vw);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: calc(var(--R) * 1.2);
+    background: #000; color: #fff; text-decoration: none;
+    font-size: calc(var(--R) * 2); line-height: 1;
+    transition: transform var(--dur-hero) var(--ease-heavy), opacity var(--dur-ui) var(--ease-snappy);
+  }
+  .float-cta :global(.arrow-circle) { align-self: flex-start; }
+  :global(html.is-loading) .float-cta { opacity: 0; transform: translateY(150%); }
+  .float-cta.is-hidden { opacity: 0; pointer-events: none; }
+  @media (max-width: 667px) { .float-cta { width: 159px; height: 59px; font-size: 16px; } }
+</style>

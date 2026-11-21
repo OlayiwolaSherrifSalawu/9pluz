@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { quote: string; name: string; role: string; photo: ImageMetadata }
+const { quote, name, role, photo } = Astro.props;
+---
+<figure class="quote">
+  <blockquote><p>“{quote}”</p></blockquote>
+  <figcaption>
+    <Image src={photo} alt={`${name}`} width={96} height={96} class="photo" />
+    <span><strong>{name}</strong><br /><span class="muted">{role}</span></span>
+  </figcaption>
+</figure>
+<style>
+  .quote { margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: calc(var(--R) * 4); padding: calc(var(--R) * 3); background: #fff; color: #000; height: 100%; }
+  blockquote { margin: 0; font-size: calc(var(--R) * 2.2); line-height: 1.35; text-wrap: pretty; }
+  figcaption { display: flex; align-items: center; gap: 1rem; font-size: calc(var(--R) * 1.6); }
+  .photo { width: 4rem; height: 4rem; object-fit: cover; object-position: top; filter: grayscale(1); }
+  .muted { color: #6b6b6b; }
+</style>

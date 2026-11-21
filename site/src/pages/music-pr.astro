@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Panel from '../components/Panel.astro';
+import MegaTitle from '../components/MegaTitle.astro';
+import ServiceRows from '../components/ServiceRows.astro';
+import QuoteCard from '../components/QuoteCard.astro';
+import Marquee from '../components/Marquee.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Doodle from '../components/Doodle.astro';
+import Arrow from '../components/Arrow.astro';
+import { siteImage } from '../lib/site';
+import { MUSIC_PR_SERVICES, TESTIMONIALS, PLAYLISTS } from '../lib/content';
+const erigga = TESTIMONIALS[0];
+---
+<Base title="Music PR" description="Music PR from 99Pluz: press features, editorial playlist placement, chart campaigns, event coverage and content that put your music in front of the right audience." image={siteImage('music-pr.jpg')}>
+  <PageHero eyebrow="Services · 01" title={['Music PR']} doodle="star" image={siteImage('music-pr.jpg')} imageAlt="An artist in white sunglasses holding headphones towards the camera"
+    lead="We put your music in front of the right audience. From media coverage to playlist placements and show promotion, we handle it all.">
+    <div class="btn-row" slot="actions">
+      <a href="#consultation" class="btn btn--solid">Book a consultation <Arrow /></a>
+      <a href="https://www.canva.com/design/DAG-YSJlGXk/if-mSOpYanjhem80wpbToQ/edit" class="btn btn--ghost" rel="noopener" target="_blank">Free artist EPK template<span class="sr-only"> (opens Canva in a new tab)</span></a>
+    </div>
+  </PageHero>
+
+  <Panel tone="green" label="What we offer">
+    <div class="wrap">
+      <div class="intro split">
+        <MegaTitle lines={['What we', 'offer']} size="display" class="big" />
+        <div class="intro-text reveal">
+          <p>We work closely with artists, labels and managers to craft tailored campaigns that amplify your sound and strengthen your presence.</p>
+          <p>Whether it’s securing features in top publications, connecting you with tastemakers or boosting visibility on streaming platforms, we make sure your music gets the spotlight it deserves. It’s not just promotion: it’s lasting impact and a buzz that keeps your audience engaged.</p>
+        </div>
+      </div>
+      <ServiceRows items={MUSIC_PR_SERVICES} />
+    </div>
+  </Panel>
+
+  <Panel tone="blue" label="Playlists and testimonial">
+    <div class="pl">
+      <p class="wrap eyebrow">Where we pitch: our own curated playlists</p>
+      <Marquee items={PLAYLISTS} label="99Pluz playlists" />
+    </div>
+    <div class="wrap quote-wrap">
+      <div class="title-row">
+        <MegaTitle lines={['Artists', 'say']} size="display" class="big" />
+        <Doodle name="balloon" class="say-balloon" />
+      </div>
+      <QuoteCard quote={erigga.quote} name={erigga.name} role={erigga.role} photo={siteImage(erigga.photo)} />
+    </div>
+  </Panel>
+
+  <Panel tone="pink" id="consultation" label="Book a consultation">
+    <div class="wrap form-grid">
+      <div class="form-intro">
+        <MegaTitle lines={['Book a', 'consultation']} size="display" class="big" />
+        <p class="lead">Tell us about your project and the services you need, and we’ll be in touch soon.</p>
+        <p>Working on a brand rather than a release? See <a href="/brand-strategy" class="ulink">Brand &amp; Creative Strategy</a>.</p>
+      </div>
+      <ContactForm defaultService="Music PR" id="musicpr" />
+    </div>
+  </Panel>
+</Base>
+<style>
+  .big { font-size: clamp(6rem, 2rem + 10vw, 18rem); line-height: .82; padding-bottom: var(--space); }
+  .intro { align-items: end; padding-bottom: var(--space); }
+  .intro-text { display: grid; gap: 1rem; color: var(--c-white-60); max-width: 40rem; }
+  @media (min-width: 900px) { .intro > * + * { border: 0; padding-left: var(--space); } }
+  .pl { display: grid; gap: .75rem; margin-bottom: var(--space-l); }
+  .title-row { display: flex; gap: 1rem; align-items: flex-start; }
+  :global(.say-balloon) { width: clamp(4rem, 9vw, 8rem); color: #fff; }
+  .quote-wrap { display: grid; gap: var(--space); max-width: 60rem; margin-inline: 0; }
+  .form-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 1000px) { .form-grid { grid-template-columns: 1fr 1.2fr; } }
+  .form-intro { display: grid; gap: 1.25rem; align-content: start; }
+</style>

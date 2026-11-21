@@ -1,0 +1,7 @@
+---
+// Services as black cards that flip to their description and deliverables.
+import FlipCards from './FlipCards.astro';
+interface Props { items: { title: string; text: string; deliverables?: string }[] }
+const { items } = Astro.props;
+---
+<FlipCards grid items={items.map((s) => ({ label: s.title, text: s.text, extra: s.deliverables ? `Deliverables: ${s.deliverables}` : undefined }))} />

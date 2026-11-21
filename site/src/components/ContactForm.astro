@@ -1,0 +1,89 @@
+---
+// No backend yet: on submit the form opens the visitor's email app with the details filled in.
+// Swap `action` for a form service (Formspree, Netlify Forms, etc.) when one is chosen.
+import { SITE } from '../lib/site';
+import Arrow from './Arrow.astro';
+interface Props { defaultService?: string; id?: string }
+const { defaultService = '', id = 'enquiry' } = Astro.props;
+const services = ['Music PR', 'Brand & Creative Strategy', 'Feature on the 99Pluz blog', 'Event coverage', 'General enquiry or news tip', 'Other'];
+---
+<form class="form" id={id} action={`mailto:${SITE.email}`} method="post" enctype="text/plain" data-mailto-form novalidate>
+  <p class="req-note">Fields marked <span aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
+  <div class="row">
+    <div class="field">
+      <label for={`${id}-name`}>Your name <span class="req" aria-hidden="true">*</span></label>
+      <input id={`${id}-name`} name="name" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for={`${id}-email`}>Email <span class="req" aria-hidden="true">*</span></label>
+      <input id={`${id}-email`} name="email" type="email" autocomplete="email" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for={`${id}-service`}>What do you need? <span class="req" aria-hidden="true">*</span></label>
+      <select id={`${id}-service`} name="service" required>
+        <option value="">Choose one</option>
+        {services.map((s) => <option selected={s === defaultService}>{s}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for={`${id}-link`}>Link to your music or brand</label>
+      <input id={`${id}-link`} name="link" type="url" inputmode="url" placeholder="https://" />
+    </div>
+  </div>
+  <div class="field">
+    <label for={`${id}-message`}>Tell us about the project <span class="req" aria-hidden="true">*</span></label>
+    <textarea id={`${id}-message`} name="message" rows="5" required></textarea>
+  </div>
+  <p class="error" role="alert" hidden></p>
+  <button class="btn btn--solid" type="submit">Send enquiry <Arrow /></button>
+  <p class="hint">This opens your email app with your message ready to send. Prefer to write directly? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+</form>
+<style>
+  .form { display: grid; gap: 1.25rem; color: var(--c-ink); }
+  .row { display: grid; gap: 1.25rem; }
+  @media (min-width: 700px) { .row { grid-template-columns: 1fr 1fr; } }
+  .field { display: grid; gap: .4rem; }
+  label { font-size: .9375rem; font-weight: 600; }
+  .req { color: var(--c-orange-text); }
+  .req-note, .hint { font-size: var(--fs-xs); }
+  .hint a { color: var(--c-orange-text); font-weight: 600; }
+  input, select, textarea {
+    width: 100%; min-height: 3rem; padding: .7rem .85rem;
+    background: var(--c-white); color: var(--c-ink);
+    border: 1px solid #6b6b6b; border-radius: 0;
+  }
+  textarea { resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--c-ink); outline-offset: 0; border-color: var(--c-ink); }
+  [aria-invalid='true'] { border-color: #b00020; border-width: 2px; }
+  .error { color: #b00020; font-weight: 600; }
+  button { justify-self: start; }
+</style>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-mailto-form]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const err = form.querySelector<HTMLElement>('.error')!;
+      const fields = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')];
+      let firstBad: HTMLElement | null = null;
+      for (const f of fields) {
+        const ok = f.checkValidity();
+        f.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstBad) firstBad = f;
+      }
+      if (firstBad) {
+        const label = form.querySelector(`label[for="${firstBad.id}"]`)?.textContent?.replace('*', '').trim();
+        err.textContent = `Please check “${label}”.`;
+        err.hidden = false;
+        firstBad.focus();
+        return;
+      }
+      err.hidden = true;
+      const d = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      const subject = `${d.service} enquiry from ${d.name}`;
+      const body = `Name: ${d.name}\nEmail: ${d.email}\nService: ${d.service}\nLink: ${d.link || '-'}\n\n${d.message}`;
+      location.href = `${form.action}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  });
+</script>

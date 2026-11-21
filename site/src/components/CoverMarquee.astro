@@ -1,0 +1,35 @@
+---
+// Infinite left→right row of square covers (spec §6.4 §4): 50s loop, pauses on hover, siblings dim to 10%.
+import { Image } from 'astro:assets';
+import { type Post, postImage, categoryName } from '../lib/site';
+interface Props { posts: Post[]; label: string }
+const { posts, label } = Astro.props;
+---
+<div class="loop" role="region" aria-label={label}>
+  {[0, 1].map((g) => (
+    <ul class="group" aria-hidden={g === 1 ? 'true' : undefined}>
+      {posts.map((p) => (
+        <li class="cell">
+          <a href={`/post/${p.slug}`} tabindex={g === 1 ? -1 : undefined}>
+            <Image src={postImage(p.cover)} alt={g === 1 ? '' : p.coverAlt} width={240} height={240} loading="lazy" />
+            <span class="cap"><span class="cat">{categoryName(p.categories[0])}</span>{p.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ))}
+</div>
+<style>
+  .loop { display: flex; overflow: hidden; width: 100%; }
+  .group { display: flex; gap: 9px; padding-right: 9px; list-style: none; flex: none; animation: loop-carousel-animation 50s linear infinite; will-change: transform; }
+  @keyframes loop-carousel-animation { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+  .loop:has(.cell:hover) .group, .loop:has(a:focus-visible) .group { animation-play-state: paused; }
+  .cell { width: calc(var(--R) * 11.7); flex: none; transition: opacity var(--dur-hover) var(--ease-snappy); }
+  @media (min-width: 668px) { .cell { width: max(117px, calc(var(--R) * 14)); } }
+  .loop:has(.cell:hover) .cell:not(:hover) { opacity: .1; }
+  .cell a { position: relative; display: block; aspect-ratio: 1; overflow: hidden; text-decoration: none; }
+  .cell :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .cap { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: .3em; padding: 8px; background: rgba(0, 0, 0, .78); color: #fff; font-size: 11px; line-height: 1.25; opacity: 0; transition: opacity var(--dur-hover) var(--ease-snappy); }
+  .cat { color: var(--c-orange); text-transform: uppercase; font-size: 10px; }
+  .cell:hover .cap, .cell a:focus-visible .cap { opacity: 1; }
+</style>

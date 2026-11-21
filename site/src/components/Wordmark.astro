@@ -1,0 +1,35 @@
+---
+// Full-bleed title (spec §5.2): the word is sized to run edge to edge of its container.
+// motion.ts fits the font size once fonts load; the CSS estimate keeps it close before that.
+interface Props { text: string; as?: 'h1' | 'h2' | 'p' | 'div'; tone?: 'black' | 'white'; class?: string; label?: string; intro?: boolean; flow?: boolean }
+const { text, as: Tag = 'div', tone = 'black', class: cls = '', label, intro = false, flow = true } = Astro.props;
+const chars = text.replace(/\s/g, '').length + text.split(' ').length * 0.25;
+---
+<Tag class={`wordmark wordmark--${tone} ${intro ? 'wordmark--intro' : ''} ${flow ? 'wordmark--flow' : ''} ${cls}`} data-fit data-flow={flow ? '' : undefined} aria-label={label} style={`--chars:${chars}`}>
+  <span class="wm-inner" aria-hidden={label ? 'true' : undefined}><span class="wm-text">{flow ? [...text].map((c) => <span class="ch">{c === ' ' ? '\u00a0' : c}</span>) : text}</span></span>
+  <slot />
+</Tag>
+<style>
+  .wordmark {
+    position: relative; display: block; width: 100%;
+    font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0; white-space: nowrap;
+    font-size: calc((100vw - 2 * var(--spacing)) / var(--chars) * 2.05);
+    line-height: .8;
+    color: var(--t-heading);
+  }
+  .wordmark--white { color: #fff; }
+  .wm-inner { display: block; overflow: clip; padding-block: .03em .01em; }
+  .wm-text { display: inline-block; transform-origin: 50% 0; }
+  /* title unfolds: drops in and stretches open vertically (spec §6.3) */
+  .wordmark--intro .wm-text { transform: translateY(-80%) scaleY(0); transition: transform var(--dur-hero) var(--ease-heavy); }
+  :global(.intro--show) .wordmark--intro .wm-text, :global(.no-js) .wordmark--intro .wm-text { transform: none; }
+  .wordmark:not(.wordmark--intro) .wm-text { transform: translateY(-60%) scaleY(0); transition: transform 1.2s var(--ease-heavy); }
+  .wordmark:not(.wordmark--intro):global(.is-in) .wm-text, :global(.no-js) .wordmark .wm-text { transform: none; }
+  /* fluid letters need room to rise and sag once the intro unfold has finished */
+  .ch { display: inline-block; transform-origin: 50% 60%; will-change: transform; }
+  :global(.intro--done) .wordmark--flow.wordmark--intro .wm-inner, .wordmark--flow:global(.flow-free) .wm-inner { overflow: visible; }
+  @media (prefers-reduced-motion: reduce) { .wm-text { transform: none !important; } }
+</style>
+<script>
+  import '../scripts/flow.ts';
+</script>

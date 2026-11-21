@@ -1,0 +1,43 @@
+---
+import { NAV, SITE } from '../lib/site';
+const year = new Date().getFullYear();
+const ICONS: Record<string, string> = {
+  Instagram: '<rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.8" cy="7.2" r="1" fill="currentColor"/>',
+  X: '<path d="M5 4h4l10 16h-4z M19 4l-6.2 7 M5 20l6.2-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  YouTube: '<rect x="3" y="6" width="18" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 9.5v5l4.2-2.5z" fill="currentColor"/>',
+  Facebook: '<path d="M13.5 20v-7h2.4l.4-2.8h-2.8V8.6c0-.8.3-1.4 1.4-1.4h1.5V4.7c-.3 0-1.1-.1-2.1-.1-2.1 0-3.5 1.3-3.5 3.6v2h-2.4V13h2.4v7" fill="currentColor"/>',
+};
+---
+<footer class="site-footer ui-orange" data-theme="orange">
+  <div class="row">
+    <div class="left">
+      <p>© {year} 99Pluz · <a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></p>
+      <ul class="socials" aria-label="Social">
+        {SITE.socials.map((s) => (
+          <li><a href={s.href} rel="noopener" target="_blank" aria-label={`${s.label} (opens in a new tab)`}><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICONS[s.label]} /></a></li>
+        ))}
+      </ul>
+    </div>
+    <ul class="links">
+      {NAV.map((n) => <li><a href={n.href} class="ulink">{n.label}</a></li>)}
+      <li><a href="/careers" class="ulink">Careers</a></li>
+      <li><a href="/privacy-policy" class="ulink">Privacy Policy</a></li>
+      <li><a href="/about#editorial-standards" class="ulink">Editorial standards</a></li>
+    </ul>
+    <p class="right">Sponsored and client content is always labelled.</p>
+  </div>
+</footer>
+<style>
+  .site-footer { position: relative; z-index: 5; padding: calc(var(--R) * 3) var(--spacing) calc(var(--spacing) + max(59px, 5.6vw) + var(--spacing)); font-size: calc(var(--R) * 1.2); line-height: calc(var(--R) * 1.6); }
+  @media (min-width: 668px) { .site-footer { font-size: calc(var(--R) * 1.3); padding-bottom: calc(var(--R) * 3); } }
+  .row { display: grid; gap: calc(var(--R) * 2); align-items: center; border-top: 1px solid var(--t-line); padding-top: calc(var(--R) * 2); }
+  @media (min-width: 980px) { .row { grid-template-columns: auto 1fr auto; padding-right: calc(max(159px, 15.07vw) + var(--spacing)); } }
+  .left { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--R) * 2); }
+  .socials { display: flex; gap: 4px; list-style: none; }
+  .socials svg { width: 62%; height: 62%; }
+  .socials a { display: grid; place-items: center; width: calc(var(--R) * 3); height: calc(var(--R) * 3); min-width: 24px; min-height: 24px; background: #000; color: #fff; text-decoration: none; font-size: .9em; text-transform: uppercase; transition: background-color var(--dur-hover) var(--ease-snappy), color var(--dur-hover); }
+  .socials a:hover { background: #fff; color: #000; }
+  .links { display: flex; flex-wrap: wrap; gap: .4rem calc(var(--R) * 2); list-style: none; justify-content: center; }
+  .links a { text-decoration: none; }
+  .right { color: var(--t-small); }
+</style>

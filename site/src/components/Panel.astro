@@ -1,0 +1,12 @@
+---
+// A "sheet": one flat colour, slides up over the previous section tilted 15° and settles flat (spec §6.2).
+// `hold` keeps it pinned for extra screens of scroll before the next sheet arrives (for scroll-driven scenes).
+type Tone = 'orange' | 'green' | 'pink' | 'blue' | 'black' | 'paper' | 'navy' | 'grey';
+interface Props { tone?: Tone; stack?: boolean; short?: boolean; id?: string; class?: string; label?: string; hold?: number }
+const { tone = 'orange', stack = true, short = false, id, class: cls = '', label, hold = 0 } = Astro.props;
+const theme = ({ navy: 'blue', grey: 'green' } as Record<string, string>)[tone] ?? tone;
+const classes = ['panel', `ui-${theme}`, short ? 'panel--short' : '', cls].filter(Boolean).join(' ');
+---
+<section class={classes} id={id} data-stack={stack ? '' : undefined} data-theme={theme} aria-label={label} style={hold ? `margin-bottom:${hold * 100}vh` : undefined}>
+  <slot />
+</section>

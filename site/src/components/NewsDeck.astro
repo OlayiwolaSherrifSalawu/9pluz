@@ -1,0 +1,317 @@
+---
+// "More news" deck: the active story floats centre stage, neighbours hover tilted at the sides.
+// Drag, click a side card, use the arrows or ←/→ to switch. Auto-advances; pauses on hover, focus or the pause button.
+import { Image } from 'astro:assets';
+import { type Post, postImage, categoryName, formatDate } from '../lib/site';
+import Doodle from './Doodle.astro';
+import Arrow from './Arrow.astro';
+
+interface Props { posts: Post[]; title?: string; id?: string; moreHref?: string; moreLabel?: string; tone?: 'dark' | 'light' }
+const { posts, title = 'More news', id = 'deck', moreHref = '/blog', moreLabel = 'See all stories', tone = 'dark' } = Astro.props;
+---
+<section class={`deck deck--${tone} ${tone === 'dark' ? 'ui-blue' : ''}`} data-theme={tone === 'dark' ? 'blue' : undefined} id={id} aria-roledescription="carousel" aria-labelledby={`${id}-h`} data-deck>
+  <div class="wrap deck-head">
+    <h2 id={`${id}-h`} class="display deck-title">
+      <span class="mega-reveal" data-reveal><span>{title}</span></span>
+      <Doodle name="sparkle" class="deck-star" />
+    </h2>
+    <div class="controls">
+      <button type="button" class="ctrl" data-prev aria-label="Previous story"><svg class="icon-tick icon-tick--rev" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
+      <p class="count" aria-hidden="true"><span data-current>01</span><span class="sep">/</span><span>{String(posts.length).padStart(2, '0')}</span></p>
+      <button type="button" class="ctrl" data-next aria-label="Next story"><svg class="icon-tick" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
+      <button type="button" class="ctrl ctrl--pause" data-pause aria-label="Pause automatic rotation" aria-pressed="false">
+        <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="1.6" /></svg>
+        <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor" /></svg>
+      </button>
+    </div>
+  </div>
+  <div class="timer wrap" aria-hidden="true"><span data-timer></span></div>
+
+  <div class="stage" data-stage>
+    <ul class="track">
+      {posts.map((p, i) => (
+        <li class="slide" data-slide aria-roledescription="slide" aria-label={`${i + 1} of ${posts.length}`}>
+          <article class="card" data-card>
+            <div class="float">
+              <div class="tilt" data-tilt>
+                <div class="media">
+                  <Image src={postImage(p.cover)} alt={p.coverAlt} width={640} widths={[360, 520, 640]} sizes="(min-width: 900px) 26rem, 76vw" loading={i < 3 ? 'eager' : 'lazy'} draggable="false" />
+                  {p.partner && <span class="tag tag--partner badge">Client</span>}
+                </div>
+                <div class="body">
+                  <p class="meta"><span class="cat">{categoryName(p.categories[0])}</span><time datetime={p.published}>{formatDate(p.published)}</time></p>
+                  <h3 class="title"><a href={`/post/${p.slug}`} data-link draggable="false">{p.title}</a></h3>
+                  <span class="read" aria-hidden="true">Read story <Arrow circled={false} /></span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+    <p class="hint" aria-hidden="true">Drag, or tap a card at the side</p>
+  </div>
+  <p class="sr-only" aria-live="polite" data-live></p>
+
+  <div class="wrap deck-foot">
+    <a href={moreHref} class="btn btn--ghost">{moreLabel} <Arrow /></a>
+  </div>
+</section>
+
+<style>
+  .deck { --card-w: clamp(15.5rem, 26vw, 25rem); position: relative; padding-block: var(--space-l); overflow: clip; color: var(--c-white); }
+  .deck--light { background: transparent; }
+  .deck-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space); }
+  .deck-title { position: relative; font-size: clamp(3rem, 1.6rem + 6vw, 8rem); }
+  .deck-title :global(.deck-star) { position: absolute; width: .42em; right: -.55em; top: -.15em; color: #fff; }
+
+  .controls { display: flex; align-items: center; gap: .5rem; }
+  .ctrl {
+    display: grid; place-items: center; width: 3rem; height: 3rem; border: 1px solid currentColor; border-radius: 50%;
+    background: transparent; cursor: pointer;
+    transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out);
+  }
+  .ctrl svg { width: 1rem; height: 1rem; }
+  .ctrl:hover { background: var(--c-orange); border-color: var(--c-orange); color: var(--c-ink); }
+  .ctrl:active { transform: scale(.92); }
+  .ctrl[data-prev]:hover svg { animation: nudge-l var(--dur-m) var(--ease-out); }
+  .ctrl[data-next]:hover svg { animation: nudge-r var(--dur-m) var(--ease-out); }
+  @keyframes nudge-l { 50% { transform: translateX(-3px); } }
+  @keyframes nudge-r { 50% { transform: translateX(3px); } }
+  .ctrl--pause { margin-left: .5rem; }
+  .ctrl--pause .i-play, .ctrl--pause[aria-pressed='true'] .i-pause { display: none; }
+  .ctrl--pause[aria-pressed='true'] .i-play { display: block; }
+  .count { font-family: var(--f-display); font-size: 1.75rem; line-height: 1; min-width: 5.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+  .count .sep { opacity: .4; margin-inline: .25rem; }
+
+  .timer { margin-top: var(--space); }
+  .timer span { display: block; height: 1px; background: var(--c-orange); transform-origin: left; transform: scaleX(0); }
+  .timer { position: relative; }
+  .timer::before { content: ''; position: absolute; inset: 0 var(--gutter); height: 1px; background: var(--c-white-30); }
+
+  .stage {
+    position: relative; margin-top: var(--space);
+    perspective: 1400px; perspective-origin: 50% 40%;
+    touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
+  }
+  .stage.is-dragging { cursor: grabbing; }
+  .track { list-style: none; display: grid; justify-content: center; padding-block: 2rem 1rem; transform-style: preserve-3d; }
+  .slide {
+    --off: 0; --abs: 0;
+    grid-area: 1 / 1; width: var(--card-w);
+    transform-style: preserve-3d;
+    transform:
+      translateX(calc(var(--off) * var(--card-w) * .78))
+      translateZ(calc(var(--abs) * -9rem))
+      rotateY(calc(var(--off) * -14deg))
+      rotateZ(calc(var(--off) * 3.5deg))
+      translateY(calc(var(--abs) * 1.25rem));
+    opacity: calc(1 - var(--abs) * .28);
+    transition: transform 750ms var(--ease-out), opacity 600ms var(--ease-out), filter 600ms var(--ease-out);
+    filter: saturate(calc(1 - var(--abs) * .45));
+  }
+  .stage.is-dragging .slide { transition: none; }
+  .slide.is-far { visibility: hidden; }
+  .slide.is-side { cursor: pointer; }
+  .slide.is-side:hover { --peek: 1; }
+  .slide.is-side .card { transform: translateY(calc(var(--peek, 0) * -.9rem)); transition: transform var(--dur-m) var(--ease-out); }
+
+  .float { position: relative; will-change: transform; }
+  .slide.is-active .float { animation: hover-float 4.2s ease-in-out infinite; }
+  @keyframes hover-float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-.4deg); }
+    50% { transform: translate3d(0, -12px, 0) rotate(.4deg); }
+  }
+  .tilt {
+    --rx: 0deg; --ry: 0deg;
+    position: relative; background: var(--c-paper); color: var(--c-ink);
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 500ms var(--ease-out);
+  }
+  /* solid offset block instead of a shadow: it slides out as the card lifts, further on hover */
+  .float::before {
+    content: ''; position: absolute; inset: 0; background: var(--c-orange);
+    transform: translate(calc(var(--lift, 0) * 14px), calc(var(--lift, 0) * 14px));
+    transition: transform 500ms var(--ease-out);
+  }
+  .slide.is-active { --lift: 1; }
+  .slide.is-active:hover { --lift: 1.5; }
+  .media { position: relative; aspect-ratio: 1; overflow: hidden; }
+  .media :global(img) { width: 100%; height: 100%; object-fit: cover; pointer-events: none; transition: transform 900ms var(--ease-out); }
+  .slide.is-active .tilt:hover .media :global(img) { transform: scale(1.05); }
+  .badge { position: absolute; left: .75rem; top: .75rem; }
+  .body { display: grid; gap: .6rem; padding: 1rem 1.1rem 1.15rem; }
+  .meta { display: flex; gap: .75rem; font-size: var(--fs-xs); }
+  .cat { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--c-orange-text); }
+  .title { font-weight: 650; font-size: 1.1875rem; line-height: 1.2; text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .title a { text-decoration: none; }
+  .title a::after { content: ''; position: absolute; inset: 0; }
+  .slide:not(.is-active) .title a::after { display: none; }
+  .read { display: inline-flex; align-items: center; gap: .5rem; font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .read :global(svg) { transition: transform var(--dur-m) var(--ease-out); }
+  .slide.is-active .tilt:hover .read :global(svg) { transform: translateX(5px); }
+  .read { opacity: 0; transform: translateY(6px); transition: opacity var(--dur-m) var(--ease-out), transform var(--dur-m) var(--ease-out); }
+  .slide.is-active .read { opacity: 1; transform: none; transition-delay: 250ms; }
+
+  .hint { text-align: center; font-size: var(--fs-xs); color: var(--c-white-60); margin-top: 1rem; }
+  .deck-foot { margin-top: var(--space); display: flex; justify-content: center; }
+
+  @media (max-width: 640px) {
+    .deck { --card-w: 74vw; }
+    .slide { transform: translateX(calc(var(--off) * var(--card-w) * .9)) translateZ(calc(var(--abs) * -6rem)) rotateZ(calc(var(--off) * 3deg)) translateY(calc(var(--abs) * 1rem)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slide.is-active .float { animation: none; }
+    .timer { display: none; }
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+  const AUTO_MS = 5200;
+
+  document.querySelectorAll<HTMLElement>('[data-deck]').forEach((deck) => {
+    const slides = [...deck.querySelectorAll<HTMLElement>('[data-slide]')];
+    const stage = deck.querySelector<HTMLElement>('[data-stage]')!;
+    const currentEl = deck.querySelector<HTMLElement>('[data-current]')!;
+    const live = deck.querySelector<HTMLElement>('[data-live]')!;
+    const timerEl = deck.querySelector<HTMLElement>('[data-timer]')!;
+    const pauseBtn = deck.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const n = slides.length;
+    let pos = 0;            // continuous position (fractional while dragging)
+    let userPaused = reduce;
+    let hoverPaused = false;
+    let inView = false;
+    let elapsed = 0;
+    let last = performance.now();
+
+    const wrap = (v: number) => ((v % n) + n) % n;
+    const offsetOf = (i: number) => {
+      let o = i - pos;
+      o = ((o % n) + n) % n;
+      if (o > n / 2) o -= n;
+      return o;
+    };
+
+    function render() {
+      const active = wrap(Math.round(pos));
+      slides.forEach((s, i) => {
+        const off = offsetOf(i);
+        const abs = Math.abs(off);
+        s.style.setProperty('--off', off.toFixed(3));
+        s.style.setProperty('--abs', Math.min(abs, 3).toFixed(3));
+        s.style.zIndex = String(100 - Math.round(abs * 10));
+        const isActive = i === active;
+        s.classList.toggle('is-active', isActive);
+        s.classList.toggle('is-side', !isActive && abs < 1.6);
+        s.classList.toggle('is-far', abs > 2.6);
+        s.setAttribute('aria-hidden', String(!isActive));
+        s.querySelector('[data-link]')?.setAttribute('tabindex', isActive ? '0' : '-1');
+      });
+      currentEl.textContent = String(active + 1).padStart(2, '0');
+    }
+
+    function go(to: number, announce = false) {
+      pos = Math.round(to);
+      elapsed = 0;
+      render();
+      if (announce) {
+        const t = slides[wrap(pos)].querySelector('[data-link]')?.textContent;
+        live.textContent = `Story ${wrap(pos) + 1} of ${n}: ${t}`;
+      }
+    }
+
+    deck.querySelector('[data-prev]')!.addEventListener('click', () => go(pos - 1, true));
+    deck.querySelector('[data-next]')!.addEventListener('click', () => go(pos + 1, true));
+    deck.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(pos - 1, true); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(pos + 1, true); }
+    });
+    pauseBtn.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pauseBtn.setAttribute('aria-pressed', String(userPaused));
+      pauseBtn.setAttribute('aria-label', userPaused ? 'Resume automatic rotation' : 'Pause automatic rotation');
+    });
+    if (reduce) { pauseBtn.setAttribute('aria-pressed', 'true'); pauseBtn.setAttribute('aria-label', 'Resume automatic rotation'); }
+
+    // pause while the visitor is engaging with it
+    stage.addEventListener('pointerenter', () => (hoverPaused = true));
+    stage.addEventListener('pointerleave', () => (hoverPaused = false));
+    deck.addEventListener('focusin', () => (hoverPaused = true));
+    deck.addEventListener('focusout', () => (hoverPaused = false));
+    new IntersectionObserver(([e]) => (inView = e.isIntersecting), { threshold: 0.3 }).observe(stage);
+
+    // drag / swipe with velocity snap
+    let startX = 0; let startPos = 0; let dragging = false; let moved = 0; let lastX = 0; let lastT = 0; let vel = 0;
+    const cardW = () => slides[0].getBoundingClientRect().width * 0.8 || 300;
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      dragging = true; moved = 0; startX = lastX = e.clientX; startPos = pos; lastT = performance.now(); vel = 0;
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      if (moved > 6 && !stage.classList.contains('is-dragging')) {
+        stage.classList.add('is-dragging');
+        stage.setPointerCapture(e.pointerId);
+      }
+      const now = performance.now();
+      vel = (e.clientX - lastX) / Math.max(1, now - lastT);
+      lastX = e.clientX; lastT = now;
+      pos = startPos - dx / cardW();
+      render();
+    });
+    const end = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      stage.classList.remove('is-dragging');
+      if (moved > 6) {
+        const fling = Math.abs(vel) > 0.5 ? -Math.sign(vel) * 0.5 : 0;
+        go(pos + fling, true);
+      } else {
+        // a tap: side card comes to centre
+        const slide = (e.target as HTMLElement).closest<HTMLElement>('[data-slide]');
+        if (slide && !slide.classList.contains('is-active')) {
+          const i = slides.indexOf(slide);
+          go(pos + offsetOf(i), true);
+        }
+      }
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
+    // block link clicks that were really drags
+    stage.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+    // active card leans toward the cursor
+    if (fine && !reduce) {
+      slides.forEach((s) => {
+        const t = s.querySelector<HTMLElement>('[data-tilt]')!;
+        s.addEventListener('pointermove', (e) => {
+          if (!s.classList.contains('is-active') || dragging) return;
+          const r = t.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          t.style.setProperty('--ry', `${(x * 10).toFixed(2)}deg`);
+          t.style.setProperty('--rx', `${(-y * 8).toFixed(2)}deg`);
+        });
+        s.addEventListener('pointerleave', () => { t.style.setProperty('--ry', '0deg'); t.style.setProperty('--rx', '0deg'); });
+      });
+    }
+
+    // autoplay with a visible timer line
+    function tick(now: number) {
+      const dt = now - last; last = now;
+      const running = !userPaused && !hoverPaused && !dragging && inView && !document.hidden;
+      if (running) {
+        elapsed += dt;
+        if (elapsed >= AUTO_MS) go(pos + 1);
+      }
+      timerEl.style.transform = `scaleX(${Math.min(1, elapsed / AUTO_MS).toFixed(4)})`;
+      requestAnimationFrame(tick);
+    }
+    render();
+    requestAnimationFrame(tick);
+  });
+</script>

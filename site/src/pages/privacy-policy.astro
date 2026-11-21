@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import { Content } from '../content/privacy.md';
+---
+<Base title="Privacy Policy" description="How 99Pluz Media Ltd collects, uses and protects your information when you visit www.99pluz.com.">
+  <header class="ph ui-orange" data-theme="orange">
+    <div class="wrap">
+      <p class="eyebrow">Legal</p>
+      <h1 class="display h1">Privacy Policy</h1>
+    </div>
+  </header>
+  <div class="reading" data-theme="paper">
+    <div class="prose"><Content /></div>
+  </div>
+</Base>
+<style>
+  .ph { color: #fff; padding-block: calc(var(--header-h) + var(--space-l)) var(--space); }
+  .h1 { font-size: clamp(3rem, 1.6rem + 6vw, 8rem); margin-top: .5rem; }
+  .reading { background: var(--c-paper); color: var(--c-ink); padding: var(--space-l) var(--gutter); }
+  .prose { max-width: var(--measure); margin-inline: auto; font-size: 1.125rem; line-height: 1.7; }
+  .prose :global(* + *) { margin-top: 1em; }
+  .prose :global(h2) { font-family: var(--f-display); text-transform: uppercase; font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem); line-height: 1.05; margin-top: 2em; }
+  .prose :global(h3) { font-weight: 700; font-size: 1.25rem; margin-top: 1.5em; }
+  .prose :global(ul) { padding-left: 1.25rem; }
+  .prose :global(li + li) { margin-top: .25em; }
+  .prose :global(li::marker) { color: var(--c-orange-text); }
+  .prose :global(a) { color: var(--c-orange-text); font-weight: 600; word-break: break-word; }
+</style>

@@ -1,0 +1,12 @@
+---
+// Giant condensed headline that slides up line by line.
+interface Props { lines: string[]; as?: 'h1' | 'h2' | 'p'; class?: string; size?: 'mega' | 'display'; id?: string }
+const { lines, as: Tag = 'h2', class: cls = '', size = 'mega', id } = Astro.props;
+---
+<Tag class={`${size} ${cls}`} id={id} data-drift>
+  {lines.map((l) => <span class="mega-reveal" data-reveal><span>{l}</span></span>)}
+  <slot />
+</Tag>
+<style>
+  .mega-reveal { padding-block: .02em; margin-block: -.02em; }
+</style>

@@ -1,0 +1,10 @@
+---
+import BlogList from '../../../components/BlogList.astro';
+import { posts, visibleCategories } from '../../../lib/site';
+export function getStaticPaths() {
+  return visibleCategories.map((c) => ({ params: { slug: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props;
+const all = posts.filter((p) => p.categories.includes(cat.slug));
+---
+<BlogList all={all} page={1} base={`/blog/categories/${cat.slug}`} category={cat.slug} titleTag={`${cat.name} stories`} heading={cat.name} intro={cat.description} />

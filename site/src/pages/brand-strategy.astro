@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Panel from '../components/Panel.astro';
+import MegaTitle from '../components/MegaTitle.astro';
+import ServiceRows from '../components/ServiceRows.astro';
+import QuoteCard from '../components/QuoteCard.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Doodle from '../components/Doodle.astro';
+import Arrow from '../components/Arrow.astro';
+import { siteImage } from '../lib/site';
+import { BRAND_SERVICES, TESTIMONIALS } from '../lib/content';
+const seyi = TESTIMONIALS[1];
+---
+<Base title="Brand & Creative Strategy" description="Brand & Creative Strategy from 99Pluz: rebrands, identity, social campaigns, ad content, events coverage and press for start-ups, artists and established businesses." image={siteImage('brand-strategy.jpg')}>
+  <PageHero eyebrow="Services · 02" title={['Brand &', 'creative', 'strategy']} doodle="burst" image={siteImage('brand-strategy.jpg')} imageAlt="A desk with a disco ball and a sign reading 'PR makes brands impossible to ignore'"
+    lead="We build, refresh and amplify brands that matter. From full rebrands to viral campaigns, 99Pluz connects strategy with storytelling to make brands unforgettable.">
+    <div class="btn-row" slot="actions">
+      <a href="#discovery" class="btn btn--solid">Book a discovery session <Arrow /></a>
+    </div>
+  </PageHero>
+
+  <Panel tone="green" label="Core services">
+    <div class="wrap">
+      <div class="intro split">
+        <MegaTitle lines={['Core', 'services']} size="display" class="big" />
+        <div class="intro-text reveal">
+          <p>Every brand has a story. Ours is helping you tell yours better.</p>
+          <p>We merge creativity, strategy and culture to shape brands that don’t just look good, but feel right to the people who experience them. Whether you’re a start-up, an artist or an established business, we deliver the structure, visuals and campaigns that help you stand out, stay relevant and grow with purpose.</p>
+        </div>
+      </div>
+      <ServiceRows items={BRAND_SERVICES} />
+    </div>
+  </Panel>
+
+  <Panel tone="blue" label="Why 99Pluz">
+    <div class="wrap why">
+      <div class="title-row">
+        <MegaTitle lines={['Why', '99Pluz']} size="display" class="big" />
+        <Doodle name="star" class="why-star" />
+      </div>
+      <div class="split rule-top why-cols">
+        <div class="reveal">
+          <p class="lead">We go beyond publicity: we build brand ecosystems.</p>
+          <p class="muted">We blend African cultural relevance with global media standards to create campaigns that feel authentic, strategic and unforgettable.</p>
+        </div>
+        <div class="reveal">
+          <QuoteCard quote={seyi.quote} name={seyi.name} role={seyi.role} photo={siteImage(seyi.photo)} />
+        </div>
+      </div>
+    </div>
+  </Panel>
+
+  <Panel tone="pink" id="discovery" label="Book a discovery session">
+    <div class="wrap form-grid">
+      <div class="form-intro">
+        <MegaTitle lines={['Ready to', 'amplify?']} size="display" class="big" />
+        <p class="lead">Book a discovery session and tell us where your brand is heading.</p>
+        <p>Promoting a release instead? See <a href="/music-pr" class="ulink">Music PR</a>.</p>
+      </div>
+      <ContactForm defaultService="Brand & Creative Strategy" id="brand" />
+    </div>
+  </Panel>
+</Base>
+<style>
+  .big { font-size: clamp(6rem, 2rem + 10vw, 18rem); line-height: .82; padding-bottom: var(--space); }
+  .intro { align-items: end; padding-bottom: var(--space); }
+  .intro-text { display: grid; gap: 1rem; color: var(--c-white-60); max-width: 40rem; }
+  .intro-text p:first-child { color: var(--c-white); font-size: var(--fs-l); line-height: 1.3; }
+  @media (min-width: 900px) { .intro > * + * { border: 0; padding-left: var(--space); } }
+  .title-row { display: flex; gap: 1rem; align-items: flex-start; }
+  :global(.why-star) { width: clamp(3rem, 6vw, 6rem); color: #fff; }
+  .why-cols > * { display: grid; gap: 1rem; align-content: start; padding-block: var(--space); }
+  @media (min-width: 900px) { .why-cols > :first-child { padding-right: var(--space); } .why-cols > * + * { padding-left: var(--space); } }
+  .form-grid { display: grid; gap: var(--space-l); }
+  @media (min-width: 1000px) { .form-grid { grid-template-columns: 1fr 1.2fr; } }
+  .form-intro { display: grid; gap: 1.25rem; align-content: start; }
+</style>

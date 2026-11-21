@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import { type Post, postImage, categoryName, formatDate } from '../lib/site';
+interface Props { post: Post; eager?: boolean; headingLevel?: 'h2' | 'h3' }
+const { post, eager = false, headingLevel: H = 'h3' } = Astro.props;
+const cat = post.categories[0];
+---
+<article class="card reveal">
+  <div class="media">
+    <Image src={postImage(post.cover)} alt={post.coverAlt} width={720} widths={[360, 540, 720]} sizes="(min-width: 1200px) 25vw, (min-width: 700px) 45vw, 92vw" loading={eager ? 'eager' : 'lazy'} />
+  </div>
+  <div class="meta">
+    <a class="cat" href={`/blog/categories/${cat}`}>{categoryName(cat)}</a>
+    {post.partner && <span class="tag tag--partner">Client</span>}
+    <time datetime={post.published}>{formatDate(post.published)}</time>
+  </div>
+  <H class="title"><a href={`/post/${post.slug}`} class="stretched">{post.title}</a></H>
+  {post.description && <p class="excerpt">{post.description}</p>}
+</article>
+<style>
+  /* the spec's black card: photo, small meta, title in white */
+  .card { position: relative; display: flex; flex-direction: column; gap: calc(var(--R) * 1.2); padding: calc(var(--R) * 1.2) calc(var(--R) * 1.2) calc(var(--R) * 2); background: #000; color: #fff; transition: transform var(--dur-hover) var(--ease-snappy); }
+  .card:hover { transform: translateY(-4px); }
+  .media { position: relative; aspect-ratio: 1; overflow: hidden; background: #111; }
+  .media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease-heavy); }
+  .card:hover .media :global(img) { transform: scale(1.05); }
+  .media::after { content: 'Read story'; position: absolute; left: calc(var(--R) * 1); bottom: calc(var(--R) * 1); padding: .45em .9em; border-radius: 99px; background: var(--c-orange); color: #000; font-size: calc(var(--R) * 1.3); transform: translateY(160%); transition: transform var(--dur-hover) var(--ease-snappy); }
+  .card:hover .media::after { transform: none; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; font-size: calc(var(--R) * 1.3); color: var(--c-white-60); }
+  .cat { position: relative; z-index: 1; text-decoration: none; color: #fff; }
+  .cat:hover { text-decoration: underline; }
+  .title { font-size: calc(var(--R) * 2); line-height: calc(var(--R) * 2.4); text-wrap: balance; letter-spacing: -.03em; }
+  .title a { text-decoration: none; }
+  .stretched::after { content: ''; position: absolute; inset: 0; }
+  .excerpt { font-size: calc(var(--R) * 1.4); line-height: calc(var(--R) * 1.9); color: var(--c-white-60); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .tag { position: relative; z-index: 1; }
+</style>
