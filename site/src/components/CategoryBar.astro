@@ -12,12 +12,11 @@ const { active = 'all' } = Astro.props;
   </ul>
 </nav>
 <style>
-  :global(.header-tucked) .catbar { top: 0; }
-  .catbar { transition: top var(--dur-m) var(--ease-out); }
-  .catbar { position: sticky; top: var(--header-h); z-index: 20; background: var(--c-black); color: var(--c-white); border-bottom: 1px solid var(--c-white-30); }
-  ul { display: flex; gap: .25rem; list-style: none; overflow-x: auto; scrollbar-width: none; padding-block: .5rem; }
+  .catbar { position: sticky; top: var(--header-h); z-index: 20; background: var(--c-green); color: #fff; border-bottom: 1px solid var(--c-white-30); }
+  ul { display: flex; gap: calc(var(--R) * 2.4); list-style: none; overflow-x: auto; scrollbar-width: none; padding-block: calc(var(--R) * 1.2); }
   ul::-webkit-scrollbar { display: none; }
-  a { display: block; white-space: nowrap; padding: .45rem .8rem; font-size: .9375rem; font-weight: 500; text-decoration: none; border-bottom: 3px solid transparent; }
-  a:hover { border-color: var(--c-white-30); }
-  a[aria-current='page'] { border-color: var(--c-orange); color: var(--c-white); font-weight: 700; }
+  a { position: relative; display: block; white-space: nowrap; padding-block: .3rem; font-size: calc(var(--R) * 1.6); text-decoration: none; }
+  a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #000; transform: scaleX(0); transform-origin: right; transition: transform var(--dur-ui) var(--ease-heavy); }
+  a:hover::after, a[aria-current='page']::after { transform: scaleX(1); transform-origin: left; }
+  a[aria-current='page'] { color: #000; }
 </style>

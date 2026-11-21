@@ -19,7 +19,7 @@ import { TEAM, PLAYLISTS } from '../lib/content';
     </div>
   </PageHero>
 
-  <Panel tone="black" label="Our approach">
+  <Panel tone="green" label="Our approach">
     <div class="wrap">
       <MegaTitle lines={['Context,', 'not noise']} size="display" class="big" />
       <div class="split cols rule-top">
@@ -42,7 +42,7 @@ import { TEAM, PLAYLISTS } from '../lib/content';
     </div>
   </Panel>
 
-  <Panel tone="grey" id="editorial-standards" label="Editorial standards">
+  <Panel tone="pink" id="editorial-standards" label="Editorial standards">
     <div class="wrap">
       <div class="title-row">
         <MegaTitle lines={['Editorial', 'standards']} size="display" class="big" />
@@ -68,7 +68,7 @@ import { TEAM, PLAYLISTS } from '../lib/content';
     </div>
   </Panel>
 
-  <Panel tone="navy" label="Who we're for">
+  <Panel tone="blue" label="Who we're for">
     <div class="wrap">
       <MegaTitle lines={["Who we're", 'for']} size="display" class="big" />
       <div class="for rule-top">
@@ -86,7 +86,7 @@ import { TEAM, PLAYLISTS } from '../lib/content';
     </div>
   </Panel>
 
-  <Panel tone="black" id="team" label="Team">
+  <Panel tone="green" id="team" label="Team">
     <div class="wrap">
       <MegaTitle lines={['The team']} size="display" class="big" />
       <div class="team rule-top">
@@ -109,13 +109,13 @@ import { TEAM, PLAYLISTS } from '../lib/content';
   </Panel>
 </Base>
 <style>
-  .big { font-size: clamp(3.25rem, 1.8rem + 7vw, 9rem); padding-bottom: var(--space); }
+  .big { font-size: clamp(6rem, 2rem + 10vw, 18rem); line-height: .82; padding-bottom: var(--space); }
   .title-row { display: flex; align-items: flex-start; gap: 1rem; }
-  :global(.std-star) { width: clamp(3rem, 6vw, 6rem); color: var(--c-orange); }
+  :global(.std-star) { width: clamp(3rem, 6vw, 6rem); color: #fff; }
   .cols > .col { display: grid; gap: 1.25rem; align-content: start; padding-block: var(--space); }
   @media (min-width: 900px) { .cols > .col:first-child { padding-right: var(--space); } .cols > .col + .col { padding-left: var(--space); } }
   .rows { list-style: none; counter-reset: r; display: grid; }
-  .rows li { padding-block: .75rem; border-top: 1px solid var(--c-white-30); }
+  .rows li { padding-block: .75rem; border-top: 1px solid var(--t-line); }
   ol.rows li { counter-increment: r; display: grid; grid-template-columns: 2.5rem 1fr; }
   ol.rows li::before { content: counter(r, decimal-leading-zero); font-size: var(--fs-xs); font-weight: 600; padding-top: .2rem; }
   .for { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space); padding-top: var(--space); }
@@ -126,6 +126,6 @@ import { TEAM, PLAYLISTS } from '../lib/content';
   .member :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top; filter: grayscale(1); transition: filter .6s var(--ease-out); }
   .member:hover :global(img) { filter: none; }
   .name { font-family: var(--f-display); text-transform: uppercase; font-size: 2rem; line-height: 1; }
-  .role { color: var(--c-orange); font-weight: 600; margin-block: .25rem .5rem; }
+  .role { color: var(--t-small); margin-block: .25rem .5rem; }
   .contact-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space); margin-top: var(--space-l); padding-top: var(--space); }
 </style>

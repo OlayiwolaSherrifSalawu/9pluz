@@ -1,62 +1,43 @@
 ---
-import { NAV, SITE, visibleCategories } from '../lib/site';
-import Doodle from './Doodle.astro';
+import { NAV, SITE } from '../lib/site';
 const year = new Date().getFullYear();
+const ICONS: Record<string, string> = {
+  Instagram: '<rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.8" cy="7.2" r="1" fill="currentColor"/>',
+  X: '<path d="M5 4h4l10 16h-4z M19 4l-6.2 7 M5 20l6.2-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  YouTube: '<rect x="3" y="6" width="18" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 9.5v5l4.2-2.5z" fill="currentColor"/>',
+  Facebook: '<path d="M13.5 20v-7h2.4l.4-2.8h-2.8V8.6c0-.8.3-1.4 1.4-1.4h1.5V4.7c-.3 0-1.1-.1-2.1-.1-2.1 0-3.5 1.3-3.5 3.6v2h-2.4V13h2.4v7" fill="currentColor"/>',
+};
 ---
-<footer class="site-footer" data-reveal-group>
-  <div class="wrap">
-    <div class="top">
-      <p class="mega foot-mega" aria-hidden="true" data-reveal>{"99Pluz".split("").map((c, i) => <span class="ch" style={`--i:${i}`}>{c}</span>)}<Doodle name="plus" class="foot-plus" /></p>
-      <p class="lead">Music PR, editorial coverage and brand strategy for Afrobeats artists and culture brands.</p>
+<footer class="site-footer ui-orange" data-theme="orange">
+  <div class="row">
+    <div class="left">
+      <p>© {year} 99Pluz · <a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></p>
+      <ul class="socials" aria-label="Social">
+        {SITE.socials.map((s) => (
+          <li><a href={s.href} rel="noopener" target="_blank" aria-label={`${s.label} (opens in a new tab)`}><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICONS[s.label]} /></a></li>
+        ))}
+      </ul>
     </div>
-    <div class="cols">
-      <nav aria-label="Footer">
-        <h2 class="eyebrow muted">Site</h2>
-        <ul>
-          <li><a href="/" class="ulink">Home</a></li>
-          {NAV.map((n) => <li><a href={n.href} class="ulink">{n.label}</a></li>)}
-          <li><a href="/careers" class="ulink">Careers</a></li>
-        </ul>
-      </nav>
-      <div>
-        <h2 class="eyebrow muted">Read</h2>
-        <ul>
-          {visibleCategories.slice(0, 6).map((c) => <li><a href={`/blog/categories/${c.slug}`} class="ulink">{c.name}</a></li>)}
-        </ul>
-      </div>
-      <div>
-        <h2 class="eyebrow muted">Contact</h2>
-        <ul>
-          <li><a href={`mailto:${SITE.email}`} class="ulink">{SITE.email}</a></li>
-          <li><a href={SITE.phoneHref} class="ulink">{SITE.phone}</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2 class="eyebrow muted">Follow</h2>
-        <ul>
-          {SITE.socials.map((s) => <li><a href={s.href} class="ulink" rel="noopener" target="_blank">{s.label}<span class="sr-only"> (opens in a new tab)</span></a></li>)}
-        </ul>
-      </div>
-    </div>
-    <div class="base">
-      <p>© {year} 99Pluz. Sponsored and client content is always labelled.</p>
-      <p><a href="/privacy-policy" class="ulink">Privacy Policy</a> · <a href="/about#editorial-standards" class="ulink">Editorial standards</a></p>
-    </div>
+    <ul class="links">
+      {NAV.map((n) => <li><a href={n.href} class="ulink">{n.label}</a></li>)}
+      <li><a href="/careers" class="ulink">Careers</a></li>
+      <li><a href="/privacy-policy" class="ulink">Privacy Policy</a></li>
+      <li><a href="/about#editorial-standards" class="ulink">Editorial standards</a></li>
+    </ul>
+    <p class="right">Sponsored and client content is always labelled.</p>
   </div>
 </footer>
 <style>
-  .site-footer { position: relative; z-index: 5; background: var(--c-black); border-top: 1px solid var(--c-white-30); padding-block: var(--space-l) calc(var(--space) + 5rem); }
-  .top { display: grid; gap: var(--space); align-items: end; padding-bottom: var(--space); }
-  .foot-mega { position: relative; width: fit-content; color: var(--c-orange); cursor: default; }
-  .ch { display: inline-block; opacity: 0; transform: translateY(.35em) rotate(6deg); transform-origin: 0 100%;
-    transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-xl) var(--ease-out); transition-delay: calc(var(--i) * 70ms); }
-  .foot-mega:global(.is-in) .ch { opacity: 1; transform: none; }
-  .foot-mega:hover .ch { animation: wave 700ms var(--ease-out) calc(var(--i) * 55ms); }
-  @keyframes wave { 40% { transform: translateY(-.12em) rotate(-3deg); color: var(--c-white); } }
-  .foot-mega :global(.foot-plus) { position: absolute; right: -.45em; top: -.05em; width: .5em; color: var(--c-white); }
-  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--space); padding-block: var(--space); border-top: 1px solid var(--c-white-30); }
-  .cols ul { list-style: none; display: grid; gap: .5rem; margin-top: .75rem; }
-  .cols a { text-decoration: none; }
-  .base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-top: var(--space); border-top: 1px solid var(--c-white-30); font-size: var(--fs-xs); color: var(--c-white-60); }
-  @media (min-width: 900px) { .top { grid-template-columns: auto 1fr; } .top .lead { justify-self: end; } }
+  .site-footer { position: relative; z-index: 5; padding: calc(var(--R) * 3) var(--spacing) calc(var(--spacing) + max(59px, 5.6vw) + var(--spacing)); font-size: calc(var(--R) * 1.2); line-height: calc(var(--R) * 1.6); }
+  @media (min-width: 668px) { .site-footer { font-size: calc(var(--R) * 1.3); padding-bottom: calc(var(--R) * 3); } }
+  .row { display: grid; gap: calc(var(--R) * 2); align-items: center; border-top: 1px solid var(--t-line); padding-top: calc(var(--R) * 2); }
+  @media (min-width: 980px) { .row { grid-template-columns: auto 1fr auto; padding-right: calc(max(159px, 15.07vw) + var(--spacing)); } }
+  .left { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--R) * 2); }
+  .socials { display: flex; gap: 4px; list-style: none; }
+  .socials svg { width: 62%; height: 62%; }
+  .socials a { display: grid; place-items: center; width: calc(var(--R) * 3); height: calc(var(--R) * 3); min-width: 24px; min-height: 24px; background: #000; color: #fff; text-decoration: none; font-size: .9em; text-transform: uppercase; transition: background-color var(--dur-hover) var(--ease-snappy), color var(--dur-hover); }
+  .socials a:hover { background: #fff; color: #000; }
+  .links { display: flex; flex-wrap: wrap; gap: .4rem calc(var(--R) * 2); list-style: none; justify-content: center; }
+  .links a { text-decoration: none; }
+  .right { color: var(--t-small); }
 </style>

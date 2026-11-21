@@ -1,0 +1,16 @@
+---
+// Stop-motion loader: ten doodles flash one after another (spec §6.3). Shown once per visit.
+import Doodle from './Doodle.astro';
+import { LOADER_GLYPHS } from '../lib/doodles';
+---
+<div class="loader ui-orange" aria-hidden="true">
+  {LOADER_GLYPHS.map((g, i) => <span class="glyph" style={`--i:${i}`}><Doodle name={g} still /></span>)}
+</div>
+<style>
+  .loader { position: fixed; inset: 0; z-index: 9999; display: none; transition: opacity .6s var(--ease-heavy), visibility 0s .6s; }
+  :global(html.is-loading) .loader { display: block; }
+  :global(html.is-loaded) .loader { display: block; opacity: 0; visibility: hidden; pointer-events: none; }
+  .glyph { position: absolute; left: 50%; top: 50%; width: clamp(56px, 7vw, 110px); transform: translate(-50%, -50%) rotate(calc(var(--i) * 17deg - 40deg)); color: #fff; opacity: 0; animation: changingElements 3s linear infinite; animation-delay: calc(var(--i) * .3s); }
+  .glyph :global(path) { stroke-width: 6; }
+  @keyframes changingElements { 0% { opacity: 0; } 5% { opacity: 1; } 10% { opacity: 0; } 100% { opacity: 0; } }
+</style>

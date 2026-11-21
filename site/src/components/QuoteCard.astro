@@ -12,9 +12,9 @@ const { quote, name, role, photo } = Astro.props;
   </figcaption>
 </figure>
 <style>
-  .quote { margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space); padding: var(--space); background: var(--c-ink); color: var(--c-white); border: 1px solid var(--c-white-30); height: 100%; }
-  blockquote { margin: 0; font-size: clamp(1.125rem, 1rem + .5vw, 1.5rem); line-height: 1.4; text-wrap: pretty; }
-  figcaption { display: flex; align-items: center; gap: 1rem; font-size: var(--fs-s); }
+  .quote { margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: calc(var(--R) * 4); padding: calc(var(--R) * 3); background: #fff; color: #000; height: 100%; }
+  blockquote { margin: 0; font-size: calc(var(--R) * 2.2); line-height: 1.35; text-wrap: pretty; }
+  figcaption { display: flex; align-items: center; gap: 1rem; font-size: calc(var(--R) * 1.6); }
   .photo { width: 4rem; height: 4rem; object-fit: cover; object-position: top; filter: grayscale(1); }
-  .muted { color: var(--c-white-60); }
+  .muted { color: #6b6b6b; }
 </style>

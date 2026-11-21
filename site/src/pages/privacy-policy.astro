@@ -3,18 +3,18 @@ import Base from '../layouts/Base.astro';
 import { Content } from '../content/privacy.md';
 ---
 <Base title="Privacy Policy" description="How 99Pluz Media Ltd collects, uses and protects your information when you visit www.99pluz.com.">
-  <header class="ph on-orange">
+  <header class="ph ui-orange" data-theme="orange">
     <div class="wrap">
       <p class="eyebrow">Legal</p>
       <h1 class="display h1">Privacy Policy</h1>
     </div>
   </header>
-  <div class="reading">
+  <div class="reading" data-theme="paper">
     <div class="prose"><Content /></div>
   </div>
 </Base>
 <style>
-  .ph { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space-l)) var(--space); }
+  .ph { color: #fff; padding-block: calc(var(--header-h) + var(--space-l)) var(--space); }
   .h1 { font-size: clamp(3rem, 1.6rem + 6vw, 8rem); margin-top: .5rem; }
   .reading { background: var(--c-paper); color: var(--c-ink); padding: var(--space-l) var(--gutter); }
   .prose { max-width: var(--measure); margin-inline: auto; font-size: 1.125rem; line-height: 1.7; }

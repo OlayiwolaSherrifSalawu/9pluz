@@ -4,7 +4,8 @@ import CategoryBar from './CategoryBar.astro';
 import PostCard from './PostCard.astro';
 import Pagination from './Pagination.astro';
 import Doodle from './Doodle.astro';
-import { type Post, PER_PAGE, postImage } from '../lib/site';
+import Wordmark from './Wordmark.astro';
+import { type Post, PER_PAGE, postImage, categoryName } from '../lib/site';
 
 interface Props { all: Post[]; page: number; base: string; heading: string; intro: string; category?: string; titleTag: string }
 const { all, page, base, heading, intro, category = 'all', titleTag } = Astro.props;
@@ -13,15 +14,20 @@ const list = all.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 const title = page > 1 ? `${titleTag} (page ${page})` : titleTag;
 ---
 <Base title={title} description={intro} image={list[0] ? postImage(list[0].cover) : undefined}>
-  <section class="blog-head on-orange">
+  <section class="blog-head ui-orange" data-theme="orange">
     <div class="wrap">
-      <p class="eyebrow">{category === 'all' ? '99Pluz blog' : 'Category'} · {all.length} stories{page > 1 ? ` · Page ${page} of ${last}` : ''}</p>
-      <h1 class="display blog-h1">{heading}<Doodle name="swoosh" class="h1-swoosh" /></h1>
-      <p class="lead">{intro}</p>
+      <p class="eyebrow muted">{category === 'all' ? '99Pluz blog' : 'Category'} · {all.length} stories{page > 1 ? ` · Page ${page} of ${last}` : ''}</p>
+      <Wordmark text={category === 'all' ? 'The blog' : categoryName(category)} intro>
+        <span class="bh-deco" aria-hidden="true"><Doodle name="sparkle" still /></span>
+      </Wordmark>
+      <div class="split rule-top bh-body">
+        <h1 class="text-lead bh-h1">{heading}</h1>
+        <p class="text-base bh-intro">{intro}</p>
+      </div>
     </div>
   </section>
   <CategoryBar active={category} />
-  <section class="blog-body" aria-label="Posts">
+  <section class="blog-body ui-green" data-theme="green" aria-label="Posts">
     <div class="wrap">
       <div class="grid">
         {list.map((p, i) => <PostCard post={p} eager={i < 4} headingLevel="h2" />)}
@@ -31,10 +37,14 @@ const title = page > 1 ? `${titleTag} (page ${page})` : titleTag;
   </section>
 </Base>
 <style>
-  .blog-head { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space-l)) var(--space); }
-  .blog-head .wrap { display: grid; gap: 1rem; }
-  .blog-h1 { position: relative; max-width: 18ch; font-size: clamp(3rem, 1.6rem + 6vw, 8rem); text-wrap: balance; }
-  .blog-h1 :global(.h1-swoosh) { display: block; width: clamp(10rem, 30vw, 26rem); color: var(--c-white); margin-top: .25rem; }
-  .blog-body { padding-block: var(--space) var(--space-l); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--space-l) clamp(1rem, 2vw, 2rem); }
+  .blog-head { padding-block: calc(var(--header-h) + var(--spacing)) calc(var(--R) * 4); }
+  .blog-head .eyebrow { margin-bottom: calc(var(--R) * 1.5); }
+  .bh-deco { position: absolute; right: 0; top: -10%; width: min(9%, 1.2em); color: #fff; transform: translateY(300%) rotate(35deg); transition: transform var(--dur-hero) var(--ease-heavy) 1s; }
+  :global(.intro--show) .bh-deco, :global(.no-js) .bh-deco { transform: rotate(-8deg); }
+  .bh-body { margin-top: calc(var(--R) * 3); }
+  .bh-body > * { padding-block: var(--spacing); }
+  .bh-h1 { color: #fff; max-width: 14em; padding-right: var(--spacing); }
+  @media (min-width: 668px) { .bh-intro { padding-left: var(--spacing); } }
+  .blog-body { padding-block: calc(var(--R) * 4) calc(var(--R) * 10); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr)); gap: calc(var(--R) * 1); }
 </style>

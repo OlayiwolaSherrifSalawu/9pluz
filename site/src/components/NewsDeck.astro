@@ -9,16 +9,16 @@ import Arrow from './Arrow.astro';
 interface Props { posts: Post[]; title?: string; id?: string; moreHref?: string; moreLabel?: string; tone?: 'dark' | 'light' }
 const { posts, title = 'More news', id = 'deck', moreHref = '/blog', moreLabel = 'See all stories', tone = 'dark' } = Astro.props;
 ---
-<section class={`deck deck--${tone}`} id={id} aria-roledescription="carousel" aria-labelledby={`${id}-h`} data-deck>
+<section class={`deck deck--${tone} ${tone === 'dark' ? 'ui-blue' : ''}`} data-theme={tone === 'dark' ? 'blue' : undefined} id={id} aria-roledescription="carousel" aria-labelledby={`${id}-h`} data-deck>
   <div class="wrap deck-head">
     <h2 id={`${id}-h`} class="display deck-title">
       <span class="mega-reveal" data-reveal><span>{title}</span></span>
-      <Doodle name="star" class="deck-star" />
+      <Doodle name="sparkle" class="deck-star" />
     </h2>
     <div class="controls">
-      <button type="button" class="ctrl" data-prev aria-label="Previous story"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
+      <button type="button" class="ctrl" data-prev aria-label="Previous story"><svg class="icon-tick icon-tick--rev" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
       <p class="count" aria-hidden="true"><span data-current>01</span><span class="sep">/</span><span>{String(posts.length).padStart(2, '0')}</span></p>
-      <button type="button" class="ctrl" data-next aria-label="Next story"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
+      <button type="button" class="ctrl" data-next aria-label="Next story"><svg class="icon-tick" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></button>
       <button type="button" class="ctrl ctrl--pause" data-pause aria-label="Pause automatic rotation" aria-pressed="false">
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="1.6" /></svg>
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor" /></svg>
@@ -60,11 +60,10 @@ const { posts, title = 'More news', id = 'deck', moreHref = '/blog', moreLabel =
 
 <style>
   .deck { --card-w: clamp(15.5rem, 26vw, 25rem); position: relative; padding-block: var(--space-l); overflow: clip; color: var(--c-white); }
-  .deck--dark { background: var(--c-black); }
   .deck--light { background: transparent; }
   .deck-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space); }
   .deck-title { position: relative; font-size: clamp(3rem, 1.6rem + 6vw, 8rem); }
-  .deck-title :global(.deck-star) { position: absolute; width: .42em; right: -.55em; top: -.15em; color: var(--c-orange); }
+  .deck-title :global(.deck-star) { position: absolute; width: .42em; right: -.55em; top: -.15em; color: #fff; }
 
   .controls { display: flex; align-items: center; gap: .5rem; }
   .ctrl {

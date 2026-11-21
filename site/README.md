@@ -23,12 +23,15 @@ node scripts/prepare-site.mjs  # turn scrape/manifest.json into src/data/posts.j
 - `src/lib/site.ts`: nav, contact details, category names and reader-facing descriptions.
 - Client posts are flagged by `PARTNER_PATTERNS` in `scripts/prepare-site.mjs`.
 
-## Design system
+## Design system (follow-art-design-spec.md)
 
-- Colours (kept from the live site): orange `#ec8835` for fills, black `#0d0d0d` base, navy `#112a78`, grey `#4a4a4a`, paper `#f6f3ee` for reading. Orange text on light backgrounds uses `#a34f0f`.
-- Fonts: Anton (headlines), Inter Tight (everything else), self-hosted via Fontsource.
-- Panels (`components/Panel.astro`) stack and tilt as you scroll (`scripts/motion.ts`). Doodles in `components/Doodle.astro` are original SVGs.
-- All motion is off under `prefers-reduced-motion`.
+- Palette: 99Pluz orange `#ec8835` + black as the brand; sage `#8e9487`, pink `#c5939d`, slate blue `#8498ac` as section colours. Body text is white on every colour (a deliberate choice; it is below 4.5:1 contrast). Long-form reading uses paper `#f6f3ee` with black text.
+- Type: Anton (display, uppercase), Archivo Variable at 112% width / 350 weight (text), Caveat Brush for script doodle words. Sizes come from `--R` (10px, scaling down between 980–1439px), following the spec's type scale.
+- Sheets (`components/Panel.astro`): each section slides over the last, tilted `15·p²` degrees from the top-left, flattening as it lands (`scripts/motion.ts`). The header takes the colour of the section under it.
+- Loader: ten doodles flash in stop-motion on the first visit per session. Intro: wordmark unfolds, the ring swings in after 1s.
+- WebGL (`scripts/gl/`, three@0.170.0, homepage only): story-card ring with brush ellipse, cards rising through "THE BLOG", curling testimonial papers, tilted team screen. Each `[data-gl]` element has a DOM fallback shown when WebGL is unavailable.
+- Hover vocabulary: Y-axis flip cards, marquee pause with siblings dimmed, orange brush accent behind button labels, underline wipe, ticking arrows.
+- Reduced motion turns off the loader, sheets tilt, ring rotation, marquees and reveals.
 
 ## Before launch
 

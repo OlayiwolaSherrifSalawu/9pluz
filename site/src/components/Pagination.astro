@@ -19,11 +19,11 @@ const pages = Array.from({ length: last }, (_, i) => i + 1).filter((n) => n === 
   </nav>
 )}
 <style>
-  .pager { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: var(--space); margin-top: var(--space); border-top: 1px solid currentColor; }
+  .pager { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: calc(var(--R) * 3); margin-top: calc(var(--R) * 5); border-top: 1px solid var(--t-line); font-size: calc(var(--R) * 1.6); }
   ol { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem; list-style: none; padding: 0; margin: 0; }
-  ol a { display: grid; place-items: center; min-width: 2.75rem; height: 2.75rem; text-decoration: none; font-weight: 600; }
+  ol a { display: grid; place-items: center; min-width: 2.75rem; height: 2.75rem; text-decoration: none; }
   ol a:hover { text-decoration: underline; }
-  ol a[aria-current='page'] { background: var(--c-orange); color: var(--c-ink); }
+  ol a[aria-current='page'] { background: #000; color: #fff; }
   li[aria-hidden] { display: grid; place-items: center; min-width: 1.5rem; }
   @media (max-width: 560px) { ol { display: none; } }
 </style>

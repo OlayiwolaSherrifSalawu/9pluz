@@ -5,6 +5,7 @@ import type { ImageMetadata } from 'astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FloatingCta from '../components/FloatingCta.astro';
+import Loader from '../components/Loader.astro';
 import defaultOg from '../assets/site/logo.png';
 
 interface Props {
@@ -31,7 +32,17 @@ const ogUrl = new URL(og.src, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#0d0d0d" />
+    <meta name="theme-color" content="#ec8835" />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.remove('no-js');
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var seen = false;
+        try { seen = sessionStorage.getItem('99pluz-loaded') === '1'; } catch (e) {}
+        if (!seen && !reduce) d.classList.add('is-loading');
+      })();
+    </script>
     <link rel="icon" href="/favicon.png" type="image/png" />
     <meta property="og:site_name" content="99Pluz" />
     <meta property="og:type" content={type} />
@@ -44,6 +55,7 @@ const ogUrl = new URL(og.src, Astro.site);
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
+    <Loader />
     <a class="skip" href="#main">Skip to content</a>
     <Header />
     <main id="main">
@@ -51,8 +63,10 @@ const ogUrl = new URL(og.src, Astro.site);
     </main>
     <Footer />
     {floatingCta && <FloatingCta />}
+    <div class="scrollbar" aria-hidden="true"><div class="scrollbar__thumb"></div></div>
     <script>
       import '../scripts/motion.ts';
+      if (document.querySelector('[data-gl]')) import('../scripts/gl/index.ts');
     </script>
   </body>
 </html>

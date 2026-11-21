@@ -1,27 +1,26 @@
 import Lenis from 'lenis';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fine = matchMedia('(pointer: fine)').matches;
 const root = document.documentElement;
 root.classList.remove('no-js');
 
-/* ---------- shared scroll state ----------
-   One loop reads scroll position and velocity; everything scroll-linked reads from here. */
-export const scroll = { y: scrollY, v: 0, dir: 1 as 1 | -1 };
-type Listener = (s: typeof scroll) => void;
+/* ---------- shared scroll loop: one rAF drives Lenis and every scroll-linked effect ---------- */
+export const scroll = { y: scrollY, v: 0, dir: 1 as 1 | -1, vh: innerHeight };
+type Listener = (s: typeof scroll, t: number) => void;
 const listeners: Listener[] = [];
-export const onScroll = (fn: Listener) => listeners.push(fn);
-(window as any).__onScroll = onScroll;
+export const onFrame = (fn: Listener) => listeners.push(fn);
+(window as any).__onFrame = onFrame;
 (window as any).__scroll = scroll;
 
 let lenis: Lenis | null = null;
 if (!reduce) {
-  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+  lenis = new Lenis({ lerp: 0.1 });
   (window as any).__lenis = lenis;
+  if (root.classList.contains('is-loading')) lenis.stop();
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) =>
     a.addEventListener('click', (e) => {
       const target = document.querySelector(a.getAttribute('href')!);
-      if (target) { e.preventDefault(); lenis!.scrollTo(target as HTMLElement, { offset: -80, duration: 1.4 }); }
+      if (target) { e.preventDefault(); lenis!.scrollTo(target as HTMLElement, { offset: 0, duration: 1.5 }); }
     }),
   );
 }
@@ -31,42 +30,56 @@ let lastT = performance.now();
 function frame(t: number) {
   lenis?.raf(t);
   const y = scrollY;
-  const dt = Math.max(1, t - lastT);
-  const raw = (y - lastY) / dt; // px per ms
-  scroll.v += (raw - scroll.v) * 0.18; // smoothed
+  const raw = (y - lastY) / Math.max(1, t - lastT);
+  scroll.v += (raw - scroll.v) * 0.18;
   if (Math.abs(raw) > 0.02) scroll.dir = raw > 0 ? 1 : -1;
-  scroll.y = y;
+  scroll.y = y; scroll.vh = innerHeight;
   lastY = y; lastT = t;
-  for (const fn of listeners) fn(scroll);
+  for (const fn of listeners) fn(scroll, t);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-/* ---------- reading progress + header that steps aside on the way down ---------- */
-const progress = document.createElement('div');
-progress.className = 'progress';
-progress.setAttribute('aria-hidden', 'true');
-progress.innerHTML = '<span></span>';
-document.body.appendChild(progress);
-const header = document.querySelector<HTMLElement>('.site-header');
-let headerHidden = false;
-onScroll(({ y, dir }) => {
-  const max = root.scrollHeight - innerHeight;
-  progress.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : '0');
-  if (!header || reduce) return;
-  const menuOpen = header.querySelector('[aria-expanded="true"]');
-  const shouldHide = dir === 1 && y > innerHeight * 0.6 && !menuOpen && !header.contains(document.activeElement);
-  if (shouldHide !== headerHidden) {
-    headerHidden = shouldHide;
-    header.classList.toggle('is-tucked', shouldHide);
-    progress.classList.toggle('is-tucked', shouldHide);
-    root.classList.toggle('header-tucked', shouldHide);
-  }
-});
+/* ---------- loader -> intro (spec §6.3) ---------- */
+function showIntro() {
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('intro--show')));
+  setTimeout(() => root.classList.add('intro--done'), 1700);
+}
+if (root.classList.contains('is-loading')) {
+  const started = performance.now();
+  const done = () => {
+    const wait = Math.max(0, 1600 - (performance.now() - started));
+    setTimeout(() => {
+      root.classList.add('is-loaded');
+      root.classList.remove('is-loading');
+      lenis?.start();
+      try { sessionStorage.setItem('99pluz-loaded', '1'); } catch {}
+      showIntro();
+    }, wait);
+  };
+  const ready = Promise.all([document.fonts.ready, new Promise((r) => (document.readyState === 'complete' ? r(0) : addEventListener('load', r, { once: true })))]);
+  Promise.race([ready, new Promise((r) => setTimeout(r, 3200))]).then(done);
+} else {
+  showIntro();
+}
 
-/* ---------- stacked panels ---------- */
+/* ---------- full-bleed wordmarks: fit the font size to the container width ---------- */
+function fitWordmarks() {
+  document.querySelectorAll<HTMLElement>('[data-fit]').forEach((el) => {
+    const text = el.querySelector<HTMLElement>('.wm-text');
+    if (!text) return;
+    el.style.fontSize = '100px';
+    const natural = text.offsetWidth;
+    const w = el.clientWidth;
+    if (natural > 0) el.style.fontSize = `${(100 * w) / natural}px`;
+  });
+}
+document.fonts.ready.then(fitWordmarks);
+fitWordmarks();
+addEventListener('resize', fitWordmarks);
+
+/* ---------- sheets: tilt 15° clockwise from the top-left and flatten quadratically (spec §6.2) ---------- */
 const panels = [...document.querySelectorAll<HTMLElement>('.panel[data-stack]')];
-const MAX_TILT = -3;
 function measure() {
   const vh = innerHeight;
   for (const p of panels) p.style.setProperty('--stick', `${Math.min(0, vh - p.offsetHeight)}px`);
@@ -76,101 +89,99 @@ if (panels.length) {
   addEventListener('resize', measure);
   new ResizeObserver(measure).observe(document.body);
   if (!reduce) {
-    onScroll(() => {
-      const vh = innerHeight;
+    onFrame(({ vh }) => {
       panels.forEach((p, i) => {
-        if (i === 0) return;
+        if (i === 0 && p.getBoundingClientRect().top <= 0) return;
         const top = p.getBoundingClientRect().top;
-        if (top > vh * 1.2 || top < -vh * 0.2) return;
-        const progress = Math.min(1, Math.max(0, 1 - top / vh));
-        p.style.setProperty('--tilt', `${((1 - progress) * MAX_TILT).toFixed(3)}deg`);
+        if (top > vh * 1.3) return;
+        const k = Math.min(Math.max(top / vh, 0), 1);
+        const deg = 15 * k * k;
+        p.style.setProperty('--tilt', `${deg.toFixed(3)}deg`);
+        p.style.setProperty('--tx', `${(deg * 0.5741).toFixed(3)}%`);
       });
     });
   }
 }
 
-/* ---------- choreography: give siblings cascading delays ---------- */
-function assignDelays() {
-  // headline lines
-  document.querySelectorAll('h1, h2, .mega, .display').forEach((h) => {
-    h.querySelectorAll<HTMLElement>(':scope > .mega-reveal, :scope > span > .mega-reveal').forEach((el, i) => el.style.setProperty('--d', `${i * 110}ms`));
+/* ---------- header colour follows the section beneath it (spec §3.3) ---------- */
+const header = document.querySelector<HTMLElement>('[data-header]');
+const themed = [...document.querySelectorAll<HTMLElement>('[data-theme]')];
+const THEME_BG: Record<string, string> = { orange: 'var(--c-orange)', green: 'var(--c-green)', pink: 'var(--c-pink)', blue: 'var(--c-blue)', black: '#000', paper: 'var(--c-orange)' };
+let currentTheme = '';
+if (header && themed.length) {
+  onFrame(() => {
+    const line = header.offsetHeight;
+    let pick: HTMLElement | null = null;
+    for (const el of themed) {
+      const r = el.getBoundingClientRect();
+      // later sheets always stack on top of earlier pinned ones, so the last match in page order wins
+      if (r.top <= line && r.bottom > line) pick = el;
+    }
+    const theme = pick?.dataset.theme ?? 'orange';
+    if (theme !== currentTheme) {
+      currentTheme = theme;
+      header.style.setProperty('--hbg', THEME_BG[theme] ?? 'var(--c-orange)');
+    }
   });
-  // grouped items (cards, principles, rows)
-  const groups = new Map<Element, HTMLElement[]>();
-  document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
-    const parent = el.parentElement!;
-    if (!groups.has(parent)) groups.set(parent, []);
-    groups.get(parent)!.push(el);
-  });
-  groups.forEach((els) => els.forEach((el, i) => {
-    if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', `${Math.min(i, 8) * 70}ms`);
-  }));
 }
-assignDelays();
+
+/* ---------- reveals with cascading delays ---------- */
+document.querySelectorAll('h1, h2, h3, .mega, .display, p').forEach((h) => {
+  h.querySelectorAll<HTMLElement>(':scope > .mega-reveal').forEach((el, i) => el.style.setProperty('--d', `${i * 120}ms`));
+});
+const groups = new Map<Element, HTMLElement[]>();
+document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+  const parent = el.parentElement!;
+  if (!groups.has(parent)) groups.set(parent, []);
+  groups.get(parent)!.push(el);
+});
+groups.forEach((els) => els.forEach((el, i) => { if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', `${Math.min(i, 8) * 80}ms`); }));
 
 const io = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
 }, { rootMargin: '0px 0px -10% 0px' });
-document.querySelectorAll('[data-reveal], .reveal, .doodle').forEach((el) => io.observe(el));
+document.querySelectorAll('[data-reveal], .reveal, .doodle, .uwipe, .wordmark:not(.wordmark--intro)').forEach((el) => io.observe(el));
 
-/* ---------- headline drift: lines slide against each other as they pass ---------- */
+/* ---------- parallax ---------- */
 if (!reduce) {
-  const titles = [...document.querySelectorAll<HTMLElement>('[data-drift]')];
-  onScroll(() => {
-    const vh = innerHeight;
-    for (const t of titles) {
-      const r = t.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > vh + 100) continue;
-      const p = (r.top + r.height / 2) / vh - 0.5; // -0.5 top .. 0.5 bottom
-      t.querySelectorAll<HTMLElement>('.mega-reveal').forEach((line, i) => {
-        const dirn = i % 2 === 0 ? 1 : -1;
-        line.style.setProperty('--drift', `${(p * dirn * Math.min(innerWidth * 0.06, 90)).toFixed(1)}px`);
-      });
+  const els = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
+  if (els.length) onFrame(({ vh }) => {
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) continue;
+      const k = (r.top + r.height / 2) / vh - 0.5;
+      el.style.setProperty('--py', `${(k * -Number(el.dataset.parallax || 60)).toFixed(1)}px`);
     }
   });
 }
 
-/* ---------- parallax images ---------- */
-if (!reduce) {
-  const imgs = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
-  onScroll(() => {
-    const vh = innerHeight;
-    for (const el of imgs) {
-      const r = el.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > vh) continue;
-      const p = (r.top + r.height / 2) / vh - 0.5;
-      el.style.setProperty('--py', `${(p * -60).toFixed(1)}px`);
-    }
+/* ---------- custom scrollbar: 1px thumb on the right edge, fades when idle (spec §6.5) ---------- */
+const bar = document.querySelector<HTMLElement>('.scrollbar');
+const thumb = bar?.querySelector<HTMLElement>('.scrollbar__thumb');
+if (bar && thumb) {
+  let idle = 0;
+  let lastScroll = -1;
+  onFrame(({ y, vh }, t) => {
+    const docH = root.scrollHeight;
+    const th = Math.max(48, (vh / docH) * vh);
+    const ty = docH > vh ? (y / (docH - vh)) * (vh - th) : 0;
+    thumb.style.setProperty('--th', `${th}px`);
+    thumb.style.setProperty('--ty', `${ty}px`);
+    if (y !== lastScroll) { lastScroll = y; idle = t; bar.classList.add('is-active'); }
+    else if (t - idle > 900) bar.classList.remove('is-active');
   });
+  let dragging = false; let startY = 0; let startScroll = 0;
+  thumb.addEventListener('pointerdown', (e) => { dragging = true; startY = e.clientY; startScroll = scrollY; thumb.setPointerCapture(e.pointerId); });
+  thumb.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const vh = innerHeight; const docH = root.scrollHeight; const th = Math.max(48, (vh / docH) * vh);
+    const target = startScroll + ((e.clientY - startY) / (vh - th)) * (docH - vh);
+    lenis ? lenis.scrollTo(target, { immediate: true }) : scrollTo(0, target);
+  });
+  thumb.addEventListener('pointerup', () => (dragging = false));
 }
 
-/* ---------- marquees speed up with scroll and follow its direction ---------- */
-if (!reduce) {
-  const tracks = [...document.querySelectorAll<HTMLElement>('.marquee .track')];
-  let rate = 1;
-  onScroll(({ v, dir }) => {
-    const target = dir * (1 + Math.min(Math.abs(v) * 6, 6));
-    rate += (target - rate) * 0.08;
-    for (const t of tracks) for (const a of t.getAnimations()) a.playbackRate = rate;
-  });
-}
-
-/* ---------- magnetic buttons: they lean toward the cursor ---------- */
-if (fine && !reduce) {
-  document.querySelectorAll<HTMLElement>('.btn--solid, .btn--orange, .float-cta, [data-magnetic]').forEach((el) => {
-    el.setAttribute('data-magnetic', '');
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      const x = e.clientX - (r.left + r.width / 2);
-      const y = e.clientY - (r.top + r.height / 2);
-      el.style.setProperty('--mx', `${(x * 0.18).toFixed(1)}px`);
-      el.style.setProperty('--my', `${(y * 0.28).toFixed(1)}px`);
-    });
-    el.addEventListener('pointerleave', () => { el.style.setProperty('--mx', '0px'); el.style.setProperty('--my', '0px'); });
-  });
-}
-
-/* ---------- floating CTA steps out of the way over the footer ---------- */
+/* ---------- floating button steps aside over the footer ---------- */
 const cta = document.querySelector<HTMLElement>('[data-float-cta]');
 const footer = document.querySelector('.site-footer');
-if (cta && footer) new IntersectionObserver(([e]) => cta.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
+if (cta && footer && innerWidth < 980) new IntersectionObserver(([e]) => cta.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);

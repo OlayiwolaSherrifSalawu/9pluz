@@ -6,7 +6,7 @@ import Arrow from '../components/Arrow.astro';
 import { posts } from '../lib/site';
 ---
 <Base title="Page not found" description="This page doesn't exist. Head back to the 99Pluz homepage or the blog." noindex>
-  <section class="nf on-orange">
+  <section class="nf ui-orange" data-theme="orange">
     <div class="wrap">
       <h1 class="mega t">
         <span class="mega-reveal is-in"><span>Page</span></span>
@@ -23,9 +23,9 @@ import { posts } from '../lib/site';
   <NewsDeck posts={posts.slice(0, 8)} title="Latest stories" id="nf-deck" />
 </Base>
 <style>
-  .nf { background: var(--c-orange); color: var(--c-ink); padding-block: calc(var(--header-h) + var(--space)) var(--space-l); }
+  .nf { color: #fff; padding-block: calc(var(--header-h) + var(--space)) var(--space-l); }
   .nf .wrap { display: grid; gap: var(--space); }
-  .t { font-size: clamp(5rem, 2rem + 16vw, 18rem); }
+  .t { font-size: clamp(5rem, 2rem + 16vw, 18rem); line-height: .9; }
   .not { position: relative; display: inline-block; overflow: visible; }
   .not :global(.nf-cross) { position: absolute; left: -8%; top: 0; width: 116%; height: 88%; color: var(--c-white); }
 </style>
